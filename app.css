@@ -707,6 +707,63 @@ select {
   opacity: 0.6;
 }
 
+/* Grip handles for all draggable block elements */
+.editor-surface .ProseMirror p,
+.editor-surface .ProseMirror h1,
+.editor-surface .ProseMirror h2,
+.editor-surface .ProseMirror h3,
+.editor-surface .ProseMirror h4,
+.editor-surface .ProseMirror h5,
+.editor-surface .ProseMirror h6,
+.editor-surface .ProseMirror pre,
+.editor-surface .ProseMirror blockquote {
+  position: relative;
+  cursor: grab;
+}
+
+.editor-surface .ProseMirror p:active,
+.editor-surface .ProseMirror h1:active,
+.editor-surface .ProseMirror h2:active,
+.editor-surface .ProseMirror h3:active,
+.editor-surface .ProseMirror h4:active,
+.editor-surface .ProseMirror h5:active,
+.editor-surface .ProseMirror h6:active,
+.editor-surface .ProseMirror pre:active,
+.editor-surface .ProseMirror blockquote:active {
+  cursor: grabbing;
+}
+
+.editor-surface .ProseMirror p::before,
+.editor-surface .ProseMirror h1::before,
+.editor-surface .ProseMirror h2::before,
+.editor-surface .ProseMirror h3::before,
+.editor-surface .ProseMirror h4::before,
+.editor-surface .ProseMirror h5::before,
+.editor-surface .ProseMirror h6::before,
+.editor-surface .ProseMirror pre::before,
+.editor-surface .ProseMirror blockquote::before {
+  content: "⋮⋮";
+  position: absolute;
+  left: -20px;
+  color: var(--muted);
+  opacity: 0;
+  transition: opacity 0.2s;
+  font-size: 0.9rem;
+  cursor: grab;
+}
+
+.editor-surface .ProseMirror p:hover::before,
+.editor-surface .ProseMirror h1:hover::before,
+.editor-surface .ProseMirror h2:hover::before,
+.editor-surface .ProseMirror h3:hover::before,
+.editor-surface .ProseMirror h4:hover::before,
+.editor-surface .ProseMirror h5:hover::before,
+.editor-surface .ProseMirror h6:hover::before,
+.editor-surface .ProseMirror pre:hover::before,
+.editor-surface .ProseMirror blockquote:hover::before {
+  opacity: 0.6;
+}
+
 .editor-surface .ProseMirror .ProseMirror-selectednode {
   outline: 2px solid var(--primary);
   outline-offset: 2px;

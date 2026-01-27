@@ -1,4 +1,4 @@
-const CACHE_NAME = "noteel-cache-v18";
+const CACHE_NAME = "noteel-cache-v19";
 const ASSETS = [
   "./",
   "./index.html",
@@ -94,7 +94,8 @@ const ASSETS = [
   "./node_modules/w3c-keyname/index.js",
   "./node_modules/crelt/index.js",
   "./node_modules/linkifyjs/dist/linkify.mjs",
-  "./node_modules/marked/lib/marked.esm.js",
+  "./node_modules/@tiptap/markdown/dist/index.js",
+  "./node_modules/@tiptap/markdown/node_modules/marked/lib/marked.esm.js",
   "./adapters/dropbox.js",
   "./adapters/onedrive.js",
   "./adapters/googledrive.js",

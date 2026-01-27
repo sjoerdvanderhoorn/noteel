@@ -1,6 +1,5 @@
 // Main rendering functions for folders, notes, editor, and breadcrumb
 
-import { marked } from "marked";
 import { loadFs } from "../core/storage.js";
 import { state, updateURL } from "../core/state.js";
 import { ui } from "./components.js";
@@ -9,26 +8,6 @@ import { formatPath, joinPath, normalizeFolderName } from "../utils/path-utils.j
 import { getResponsiveMode, updateResponsiveLayout } from "../utils/responsive.js";
 import { getFolderViewMode, softDeleteFolder, restoreFolder, hardDeleteFolder, renameFolder, createFolder } from "../features/folders.js";
 import { setupDragAndDrop } from "../features/drag-drop.js";
-
-// Configure marked for GFM with task list support
-marked.use({
-  gfm: true,
-  breaks: false,
-  renderer: {
-    listitem(text, task, checked) {
-      if (task) {
-        return `<li data-type="taskItem" data-checked="${checked ? 'true' : 'false'}"><label><input type="checkbox" ${checked ? 'checked="checked"' : ''}><span></span></label><div><p>${text}</p></div></li>\n`;
-      }
-      return false;
-    },
-    list(body, ordered, start) {
-      if (body.includes('data-type="taskItem"')) {
-        return `<ul data-type="taskList">\n${body}</ul>\n`;
-      }
-      return false;
-    }
-  }
-});
 
 function buildFolderTree(paths) {
   const tree = {};
@@ -405,8 +384,17 @@ export function renderEditor() {
   
   if (state.editorInstance) {
     state.editorInstance.setEditable(true);
-    const html = marked.parse(contentWithoutTitle);
-    state.editorInstance.commands.setContent(html || "", false);
+    // Use TipTap's markdown parsing to set the editor content
+    const json = state.editorInstance.markdown?.parse(contentWithoutTitle);
+    if (json) {
+      state.editorInstance.commands.setContent(json);
+    } else {
+      // Fallback if markdown parsing fails
+      state.editorInstance.commands.setContent(contentWithoutTitle || "", { contentType: 'markdown' });
+    }
+    
+    // Render preview
+    ui.preview.innerHTML = state.editorInstance.getHTML();
   }
 
   const deleted = isSoftDeleted(state.currentFile);

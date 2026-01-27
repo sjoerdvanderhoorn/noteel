@@ -7,6 +7,11 @@ import TaskItem from "@tiptap/extension-task-item";
 import Highlight from "@tiptap/extension-highlight";
 import Underline from "@tiptap/extension-underline";
 import ListItem from "@tiptap/extension-list-item";
+import Heading from "@tiptap/extension-heading";
+import Paragraph from "@tiptap/extension-paragraph";
+import CodeBlock from "@tiptap/extension-code-block";
+import Blockquote from "@tiptap/extension-blockquote";
+import { Markdown } from "@tiptap/markdown";
 import { ui } from "./components.js";
 import { state } from "../core/state.js";
 
@@ -14,8 +19,25 @@ export async function initEditor(onUpdateCallback) {
   state.editorInstance = new Editor({
     element: ui.editor,
     extensions: [
+      Markdown,
       StarterKit.configure({
         listItem: false, // We'll configure this separately
+        heading: false, // We'll configure this separately
+        paragraph: false, // We'll configure this separately
+        codeBlock: false, // We'll configure this separately
+        blockquote: false, // We'll configure this separately
+      }),
+      Paragraph.extend({
+        draggable: true,
+      }),
+      Heading.extend({
+        draggable: true,
+      }),
+      CodeBlock.extend({
+        draggable: true,
+      }),
+      Blockquote.extend({
+        draggable: true,
       }),
       ListItem.extend({
         draggable: true,

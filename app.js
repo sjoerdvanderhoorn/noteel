@@ -35,7 +35,7 @@ function debounceSave() {
       title = `Note #${noteNum}`;
       ui.noteTitleInput.value = title;
     }
-    const bodyContent = state.editorInstance ? serializeMarkdown(state.editorInstance.getJSON()) : "";
+    const bodyContent = state.editorInstance ? serializeMarkdown(state.editorInstance.getJSON(), state.editorInstance) : "";
     const content = `# ${title}\n\n${bodyContent}`;
     
     const fs = loadFs();

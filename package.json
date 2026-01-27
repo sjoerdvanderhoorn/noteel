@@ -12,8 +12,8 @@
     "@tiptap/extension-task-item": "^3.0.0",
     "@tiptap/extension-task-list": "^3.0.0",
     "@tiptap/extension-underline": "^3.0.0",
+    "@tiptap/markdown": "^3.17.1",
     "@tiptap/starter-kit": "^3.0.0",
-    "dropbox": "^10.34.0",
-    "marked": "^12.0.0"
+    "dropbox": "^10.34.0"
   }
 }
