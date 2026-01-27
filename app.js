@@ -403,6 +403,20 @@ ui.noteTitleInput.addEventListener("input", () => {
 ui.welcomeDropboxBtn.addEventListener("click", () => handleProviderSelection('dropbox'));
 ui.welcomeOneDriveBtn.addEventListener("click", () => handleProviderSelection('onedrive'));
 ui.welcomeGoogleDriveBtn.addEventListener("click", () => handleProviderSelection('googledrive'));
+ui.welcomeDemoBtn.addEventListener("click", async () => {
+  setSelectedProvider('local');
+  ui.welcomeDialog.close();
+  
+  // Load demo files from sample adapter
+  try {
+    await syncFromAdapter(adapters.sample);
+    renderAll(renderEditor, showBanner, renderBreadcrumb);
+    showBanner('Demo content loaded! Explore the sample notes.');
+  } catch (error) {
+    console.error('Failed to load demo:', error);
+    showBanner('Failed to load demo content.');
+  }
+});
 ui.welcomeDecideLaterBtn.addEventListener("click", () => {
   setSelectedProvider('local');
   ui.welcomeDialog.close();

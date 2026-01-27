@@ -56,5 +56,6 @@ export const ui = {
   welcomeDropboxBtn: document.getElementById("welcomeDropboxBtn"),
   welcomeOneDriveBtn: document.getElementById("welcomeOneDriveBtn"),
   welcomeGoogleDriveBtn: document.getElementById("welcomeGoogleDriveBtn"),
+  welcomeDemoBtn: document.getElementById("welcomeDemoBtn"),
   welcomeDecideLaterBtn: document.getElementById("welcomeDecideLaterBtn")
 };

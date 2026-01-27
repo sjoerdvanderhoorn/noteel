@@ -1242,6 +1242,17 @@ select {
   font-size: 0.9rem;
 }
 
+.welcome-footer-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  align-items: center;
+}
+
+.welcome-footer-buttons button {
+  flex: 0 1 auto;
+}
+
 .spinner {
   width: 48px;
   height: 48px;

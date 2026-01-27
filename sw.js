@@ -1,4 +1,4 @@
-const CACHE_NAME = "noteel-cache-v19";
+const CACHE_NAME = "noteel-cache-v21";
 const ASSETS = [
   "./",
   "./index.html",
@@ -102,6 +102,21 @@ const ASSETS = [
   "./user-folder-example/.noteel/file-index.json",
   "./user-folder-example/index.md",
   "./user-folder-example/my-projects/index.md",
+  "./user-folder-example/recipes/.noteel",
+  "./user-folder-example/recipes/chocolate-chip-cookies.md",
+  "./user-folder-example/recipes/pasta-carbonara.md",
+  "./user-folder-example/recipes/chicken-stir-fry.md",
+  "./user-folder-example/groceries/weekly-shopping-list.md",
+  "./user-folder-example/groceries/meal-prep-ideas.md",
+  "./user-folder-example/todo/.noteel",
+  "./user-folder-example/todo/work-tasks.md",
+  "./user-folder-example/todo/home-projects.md",
+  "./user-folder-example/appliances/coffee-maker.md",
+  "./user-folder-example/appliances/dishwasher.md",
+  "./user-folder-example/appliances/microwave.md",
+  "./user-folder-example/research/ai-trends-2026.md",
+  "./user-folder-example/research/sustainable-energy.md",
+  "./user-folder-example/research/space-exploration.md",
   "./user-folder-example/.noteel/settings.json",
   "./user-folder-example/.noteel/extensions/chatgpt/manifest.json",
   "./user-folder-example/.noteel/extensions/drawio/manifest.json"
