@@ -1,7 +1,7 @@
 // Main application entry point
 import { getSelectedProvider, setSelectedProvider } from "./core/auth.js";
 import { state, updateURL, loadFromURL } from "./core/state.js";
-import { ensureSettingsFile, updateSettingsFromFile, loadFs } from "./core/storage.js";
+import { ensureSettingsFile, updateSettingsFromFile, loadFs, saveFs } from "./core/storage.js";
 import { serializeMarkdown } from "./core/markdown.js";
 import { createAdapters } from "./core/adapters.js";
 import { ui } from "./ui/components.js";
@@ -29,18 +29,13 @@ function debounceSave() {
     if (!state.currentFile) {
       return;
     }
-    let title = ui.noteTitleInput.value.trim();
-    if (!title) {
-      const noteNum = getNextNoteNumber();
-      title = `Note #${noteNum}`;
-      ui.noteTitleInput.value = title;
-    }
+    const title = ui.noteTitleInput.value.trim();
     const bodyContent = state.editorInstance ? serializeMarkdown(state.editorInstance.getJSON(), state.editorInstance) : "";
-    const content = `# ${title}\n\n${bodyContent}`;
+    const content = title ? `# ${title}\n\n${bodyContent}` : bodyContent;
     
     const fs = loadFs();
     const oldTitle = getFileTitle(fs.files[state.currentFile]?.content || "", "");
-    if (title !== oldTitle) {
+    if (title && title !== oldTitle) {
       const newFilename = generateFilenameFromTitle(title);
       const parts = state.currentFile.split("/");
       parts.pop();
@@ -187,16 +182,14 @@ ui.showDeletedToggle.addEventListener("click", () => {
 
 ui.newNoteBtn.addEventListener("click", () => {
   const noteNum = getNextNoteNumber();
-  const title = `Note #${noteNum}`;
-  const filename = generateFilenameFromTitle(title);
+  const filename = `note-${noteNum}.md`;
   const path = joinPath(state.currentFolder, filename);
-  addNote(path, `# ${title}\n\n`);
+  addNote(path, "");
   state.currentFile = path;
   updateURL();
   renderAll(renderEditor, showBanner, renderBreadcrumb);
   setTimeout(() => {
     ui.noteTitleInput.focus();
-    ui.noteTitleInput.select();
   }, 50);
 });
 

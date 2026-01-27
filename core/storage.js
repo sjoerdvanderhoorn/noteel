@@ -56,12 +56,17 @@ export function saveExtensions(extensions) {
 export function loadThemes() {
   const raw = localStorage.getItem(THEMES_KEY);
   if (!raw) {
-    return { default: "" };
+    return { default: "", light: "" };
   }
   try {
-    return JSON.parse(raw);
+    const themes = JSON.parse(raw);
+    // Ensure light theme exists
+    if (!themes.light) {
+      themes.light = "";
+    }
+    return themes;
   } catch {
-    return { default: "" };
+    return { default: "", light: "" };
   }
 }
 

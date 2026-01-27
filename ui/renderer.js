@@ -376,7 +376,7 @@ export function renderEditor() {
   document.querySelector(".editor").style.display = "";
 
   const note = files[state.currentFile];
-  const title = getFileTitle(note.content, "Untitled");
+  const title = getFileTitle(note.content, "");
   const contentWithoutTitle = stripFirstHeading(note.content ?? "");
   
   ui.noteTitleInput.value = title;
@@ -392,9 +392,6 @@ export function renderEditor() {
       // Fallback if markdown parsing fails
       state.editorInstance.commands.setContent(contentWithoutTitle || "", { contentType: 'markdown' });
     }
-    
-    // Render preview
-    ui.preview.innerHTML = state.editorInstance.getHTML();
   }
 
   const deleted = isSoftDeleted(state.currentFile);

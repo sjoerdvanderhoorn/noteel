@@ -14,6 +14,13 @@ export function ensureThemeApplied() {
     document.head.appendChild(styleTag);
   }
   styleTag.textContent = themes[settings.theme] ?? "";
+  
+  // Apply light theme by setting data-theme attribute
+  if (settings.theme === "light") {
+    document.documentElement.setAttribute("data-theme", "light");
+  } else {
+    document.documentElement.removeAttribute("data-theme");
+  }
 }
 
 export async function loadThemesFromAdapter(adapter) {
