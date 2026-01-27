@@ -1,0 +1,9 @@
+{
+    "name": "Draw.io Extension",
+    "version": "1.0.0",
+    "description": "An extension to integrate Draw.io functionalities.",
+    "author": "Your Name",
+    "license": "MIT",
+    "main": "index.js",
+    "url": "https://example.com/drawio-extension.zip"
+}

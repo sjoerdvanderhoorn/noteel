@@ -1,0 +1,15 @@
+{
+  "name": "Noteel",
+  "short_name": "Noteel",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#1f2937",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'%3E%3Crect width='128' height='128' rx='24' fill='%2322c55e'/%3E%3Cpath d='M36 32h56a8 8 0 0 1 8 8v48a8 8 0 0 1-8 8H36a8 8 0 0 1-8-8V40a8 8 0 0 1 8-8zm8 20h40v8H44zm0 16h40v8H44z' fill='white'/%3E%3C/svg%3E",
+      "sizes": "128x128",
+      "type": "image/svg+xml"
+    }
+  ]
+}

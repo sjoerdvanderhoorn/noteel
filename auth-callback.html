@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Authentication - Noteel</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background: #1a1d23;
+      color: #e4e4e7;
+    }
+    .message {
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="message">
+    <h1>Authenticating...</h1>
+    <p>Please wait while we complete the authentication.</p>
+  </div>
+  <script type="module">
+    import { parseOAuthCallback } from './core/auth.js';
+    
+    const params = parseOAuthCallback();
+    
+    if (params.error) {
+      // Send error back to opener
+      if (window.opener) {
+        window.opener.postMessage({
+          type: 'oauth-error',
+          error: params.error,
+          errorDescription: params.errorDescription
+        }, window.location.origin);
+      }
+      document.querySelector('.message').innerHTML = `
+        <h1>Authentication Failed</h1>
+        <p>${params.errorDescription || params.error}</p>
+        <p>You can close this window.</p>
+      `;
+    } else if (params.accessToken || params.code) {
+      // Send tokens back to opener
+      if (window.opener) {
+        window.opener.postMessage({
+          type: 'oauth-success',
+          accessToken: params.accessToken,
+          code: params.code,
+          state: params.state
+        }, window.location.origin);
+        
+        // Don't close immediately - wait for parent to process
+        document.querySelector('.message').innerHTML = `
+          <h1>Success!</h1>
+          <p>Authentication complete. This window will close automatically...</p>
+        `;
+        
+        // Close after a short delay to ensure message is processed
+        setTimeout(() => {
+          window.close();
+        }, 1000);
+      } else {
+        // Fallback: store in localStorage and redirect
+        sessionStorage.setItem('oauth_callback', JSON.stringify(params));
+        window.location.href = '/';
+      }
+    } else {
+      document.querySelector('.message').innerHTML = `
+        <h1>No Authentication Data</h1>
+        <p>You can close this window.</p>
+      `;
+    }
+  </script>
+</body>
+</html>

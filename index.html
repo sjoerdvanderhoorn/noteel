@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Noteel</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="app.css" />
+  <meta name="theme-color" content="#1f2937" />
+  <script type="importmap">
+    {
+      "imports": {
+        "@tiptap/core": "./node_modules/@tiptap/core/dist/index.js",
+        "@tiptap/core/jsx-runtime": "./node_modules/@tiptap/core/dist/jsx-runtime/jsx-runtime.js",
+        "@tiptap/starter-kit": "./node_modules/@tiptap/starter-kit/dist/index.js",
+        "@tiptap/pm/commands": "./node_modules/@tiptap/pm/dist/commands/index.js",
+        "@tiptap/pm/changeset": "./node_modules/@tiptap/pm/dist/changeset/index.js",
+        "@tiptap/pm/collab": "./node_modules/@tiptap/pm/dist/collab/index.js",
+        "@tiptap/pm/dropcursor": "./node_modules/@tiptap/pm/dist/dropcursor/index.js",
+        "@tiptap/pm/gapcursor": "./node_modules/@tiptap/pm/dist/gapcursor/index.js",
+        "@tiptap/pm/history": "./node_modules/@tiptap/pm/dist/history/index.js",
+        "@tiptap/pm/inputrules": "./node_modules/@tiptap/pm/dist/inputrules/index.js",
+        "@tiptap/pm/keymap": "./node_modules/@tiptap/pm/dist/keymap/index.js",
+        "@tiptap/pm/markdown": "./node_modules/@tiptap/pm/dist/markdown/index.js",
+        "@tiptap/pm/menu": "./node_modules/@tiptap/pm/dist/menu/index.js",
+        "@tiptap/pm/model": "./node_modules/@tiptap/pm/dist/model/index.js",
+        "@tiptap/pm/schema-basic": "./node_modules/@tiptap/pm/dist/schema-basic/index.js",
+        "@tiptap/pm/schema-list": "./node_modules/@tiptap/pm/dist/schema-list/index.js",
+        "@tiptap/pm/state": "./node_modules/@tiptap/pm/dist/state/index.js",
+        "@tiptap/pm/tables": "./node_modules/@tiptap/pm/dist/tables/index.js",
+        "@tiptap/pm/trailing-node": "./node_modules/@tiptap/pm/dist/trailing-node/index.js",
+        "@tiptap/pm/transform": "./node_modules/@tiptap/pm/dist/transform/index.js",
+        "@tiptap/pm/view": "./node_modules/@tiptap/pm/dist/view/index.js",
+        "@tiptap/extension-blockquote": "./node_modules/@tiptap/extension-blockquote/dist/index.js",
+        "@tiptap/extension-bold": "./node_modules/@tiptap/extension-bold/dist/index.js",
+        "@tiptap/extension-bullet-list": "./node_modules/@tiptap/extension-bullet-list/dist/index.js",
+        "@tiptap/extension-code": "./node_modules/@tiptap/extension-code/dist/index.js",
+        "@tiptap/extension-code-block": "./node_modules/@tiptap/extension-code-block/dist/index.js",
+        "@tiptap/extension-document": "./node_modules/@tiptap/extension-document/dist/index.js",
+        "@tiptap/extension-dropcursor": "./node_modules/@tiptap/extension-dropcursor/dist/index.js",
+        "@tiptap/extension-gapcursor": "./node_modules/@tiptap/extension-gapcursor/dist/index.js",
+        "@tiptap/extension-hard-break": "./node_modules/@tiptap/extension-hard-break/dist/index.js",
+        "@tiptap/extension-heading": "./node_modules/@tiptap/extension-heading/dist/index.js",
+        "@tiptap/extension-highlight": "./node_modules/@tiptap/extension-highlight/dist/index.js",
+        "@tiptap/extension-horizontal-rule": "./node_modules/@tiptap/extension-horizontal-rule/dist/index.js",
+        "@tiptap/extension-italic": "./node_modules/@tiptap/extension-italic/dist/index.js",
+        "@tiptap/extension-link": "./node_modules/@tiptap/extension-link/dist/index.js",
+        "@tiptap/extension-list": "./node_modules/@tiptap/extension-list/dist/index.js",
+        "@tiptap/extension-list-item": "./node_modules/@tiptap/extension-list-item/dist/index.js",
+        "@tiptap/extension-list-keymap": "./node_modules/@tiptap/extension-list-keymap/dist/index.js",
+        "@tiptap/extension-ordered-list": "./node_modules/@tiptap/extension-ordered-list/dist/index.js",
+        "@tiptap/extension-paragraph": "./node_modules/@tiptap/extension-paragraph/dist/index.js",
+        "@tiptap/extension-strike": "./node_modules/@tiptap/extension-strike/dist/index.js",
+        "@tiptap/extension-task-list": "./node_modules/@tiptap/extension-task-list/dist/index.js",
+        "@tiptap/extension-task-item": "./node_modules/@tiptap/extension-task-item/dist/index.js",
+        "@tiptap/extension-text": "./node_modules/@tiptap/extension-text/dist/index.js",
+        "@tiptap/extension-underline": "./node_modules/@tiptap/extension-underline/dist/index.js",
+        "@tiptap/extensions": "./node_modules/@tiptap/extensions/dist/index.js",
+        "prosemirror-commands": "./node_modules/prosemirror-commands/dist/index.js",
+        "prosemirror-changeset": "./node_modules/prosemirror-changeset/dist/index.js",
+        "prosemirror-collab": "./node_modules/prosemirror-collab/dist/index.js",
+        "prosemirror-dropcursor": "./node_modules/prosemirror-dropcursor/dist/index.js",
+        "prosemirror-gapcursor": "./node_modules/prosemirror-gapcursor/dist/index.js",
+        "prosemirror-history": "./node_modules/prosemirror-history/dist/index.js",
+        "prosemirror-inputrules": "./node_modules/prosemirror-inputrules/dist/index.js",
+        "prosemirror-keymap": "./node_modules/prosemirror-keymap/dist/index.js",
+        "prosemirror-markdown": "./node_modules/prosemirror-markdown/dist/index.js",
+        "prosemirror-menu": "./node_modules/prosemirror-menu/dist/index.js",
+        "prosemirror-model": "./node_modules/prosemirror-model/dist/index.js",
+        "prosemirror-schema-basic": "./node_modules/prosemirror-schema-basic/dist/index.js",
+        "prosemirror-schema-list": "./node_modules/prosemirror-schema-list/dist/index.js",
+        "prosemirror-state": "./node_modules/prosemirror-state/dist/index.js",
+        "prosemirror-tables": "./node_modules/prosemirror-tables/dist/index.js",
+        "prosemirror-trailing-node": "./node_modules/prosemirror-trailing-node/dist/index.js",
+        "prosemirror-transform": "./node_modules/prosemirror-transform/dist/index.js",
+        "prosemirror-view": "./node_modules/prosemirror-view/dist/index.js",
+        "orderedmap": "./node_modules/orderedmap/dist/index.js",
+        "rope-sequence": "./node_modules/rope-sequence/dist/index.js",
+        "w3c-keyname": "./node_modules/w3c-keyname/index.js",
+        "crelt": "./node_modules/crelt/index.js",
+        "linkifyjs": "./node_modules/linkifyjs/dist/linkify.mjs",
+        "marked": "./node_modules/marked/lib/marked.esm.js"
+      }
+    }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">Noteel</div>
+    <div class="search">
+      <input id="searchInput" type="search" placeholder="Search notes..." />
+    </div>
+    <div class="actions">
+      <button id="syncStatusIcon" class="ghost icon-btn" title="All changes saved">✓</button>
+      <button id="settingsBtn" class="ghost icon-btn" title="Settings">⚙</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <span>Folders</span>
+        <button id="newFolderBtn" class="ghost icon-btn" title="New folder">+</button>
+      </div>
+      <nav id="folderTree" class="folder-tree"></nav>
+    </aside>
+
+    <section class="list">
+      <div class="list-header">
+        <button id="listBackBtn" class="ghost icon-btn back-btn" title="Back to folders">←</button>
+        <div id="breadcrumb" class="breadcrumb"></div>
+        <button id="newNoteBtn" class="ghost icon-btn" title="New note">+</button>
+        <button id="showDeletedToggle" class="ghost icon-btn" title="Show deleted">👁</button>
+        <button id="viewToggleBtn" class="ghost icon-btn" title="Toggle view mode">⊞</button>
+      </div>
+      <div id="noteList" class="note-list"></div>
+    </section>
+
+    <section class="editor">
+      <div class="editor-toolbar">
+        <div class="editor-toolbar-left">
+          <button id="editorBackBtn" class="ghost icon-btn back-btn" title="Back">←</button>
+          <button id="boldBtn" type="button"><strong>B</strong></button>
+          <button id="italicBtn" type="button"><em>I</em></button>
+          <button id="underlineBtn" type="button"><u>U</u></button>
+          <button id="strikeBtn" type="button"><s>S</s></button>
+          <button id="highlightBtn" type="button" style="background: #fef08a; color: #1a1d23; border: none;">H</button>
+          <button id="headingBtn" type="button">H1</button>
+          <button id="bulletBtn" type="button">• List</button>
+          <button id="checkboxBtn" type="button">☐ Checkbox</button>
+          <button id="codeBtn" type="button">Code</button>
+          <button id="quoteBtn" type="button">Quote</button>
+        </div>
+        <div class="editor-toolbar-right">
+          <button id="closeEditorBtn" class="ghost icon-btn close-editor" title="Close">&times;</button>
+          <div class="dropdown">
+            <button id="moreActionsBtn" class="ghost" type="button">⋮</button>
+            <div class="dropdown-menu">
+              <button id="softDeleteBtn" type="button">Soft delete</button>
+              <button id="restoreBtn" type="button">Restore</button>
+              <button id="hardDeleteBtn" class="danger" type="button">Hard delete</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="editor-title-container">
+        <input id="noteTitleInput" class="editor-title-input" type="text" placeholder="Note title..." />
+      </div>
+      <div id="editor" class="editor-surface" aria-label="Note editor"></div>
+    </section>
+  </main>
+
+  <dialog id="settingsDialog" class="settings-dialog">
+    <form method="dialog" class="settings-form">
+      <div class="settings-header">
+        <h2>Settings</h2>
+        <button id="closeSettings" class="ghost" value="cancel">Close</button>
+      </div>
+
+      <section class="settings-section">
+        <h3>Sync</h3>
+        <div class="settings-sync-controls">
+          <div class="current-adapter">
+            <label>Current Storage:</label>
+            <span id="currentAdapterDisplay"></span>
+          </div>
+          <div class="settings-actions">
+            <button id="syncFromBtn" class="primary" type="button">Sync from</button>
+            <button id="syncToBtn" type="button">Sync to</button>
+            <button id="logoutBtn" class="danger" type="button">Logout</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="settings-section">
+        <h3>Export</h3>
+        <div class="settings-actions">
+          <button id="exportZipBtn" class="primary" type="button">Download Notes as ZIP</button>
+        </div>
+      </section>
+
+      <section class="settings-section">
+        <h3>Extensions</h3>
+        <div id="extensionsList" class="settings-list"></div>
+        <div class="settings-actions">
+          <label class="file-upload">
+            <input id="extensionFile" type="file" accept=".zip" />
+            Upload ZIP
+          </label>
+          <input id="extensionUrl" type="url" placeholder="https://example.com/extension.zip" />
+          <button id="addExtensionUrl" type="button">Add from URL</button>
+          <button id="checkExtensionUpdates" type="button">Check updates</button>
+        </div>
+      </section>
+
+      <section class="settings-section">
+        <h3>Themes</h3>
+        <select id="themeSelect"></select>
+        <div class="settings-actions">
+          <label class="file-upload">
+            <input id="themeFile" type="file" accept=".css" />
+            Upload CSS
+          </label>
+          <input id="themeUrl" type="url" placeholder="https://example.com/theme.css" />
+          <button id="addThemeUrl" type="button">Add from URL</button>
+        </div>
+      </section>
+    </form>
+  </dialog>
+
+  <div id="banner" class="banner hidden"></div>
+
+  <dialog id="welcomeDialog" class="welcome-dialog">
+    <div class="welcome-content" id="welcomeContentMain">
+      <h1>Welcome to Noteel</h1>
+      <p>Choose where you'd like to save your notes:</p>
+      
+      <div class="storage-options">
+        <button id="welcomeDropboxBtn" class="storage-option" type="button">
+          <div class="storage-icon">📦</div>
+          <div class="storage-name">Dropbox</div>
+          <div class="storage-desc">Sync with Dropbox</div>
+        </button>
+        
+        <button id="welcomeOneDriveBtn" class="storage-option" type="button">
+          <div class="storage-icon">☁️</div>
+          <div class="storage-name">OneDrive</div>
+          <div class="storage-desc">Sync with Microsoft OneDrive</div>
+        </button>
+        
+        <button id="welcomeGoogleDriveBtn" class="storage-option" type="button">
+          <div class="storage-icon">🔷</div>
+          <div class="storage-name">Google Drive</div>
+          <div class="storage-desc">Sync with Google Drive</div>
+        </button>
+      </div>
+      
+      <button id="welcomeDecideLaterBtn" class="ghost" type="button">Decide Later</button>
+    </div>
+    
+    <div class="welcome-loading" id="welcomeLoading" style="display: none;">
+      <div class="spinner"></div>
+      <h2 id="welcomeLoadingTitle">Connecting...</h2>
+      <p id="welcomeLoadingMessage">Please wait while we sync your notes</p>
+      <div class="progress-info">
+        <span id="welcomeProgressText"></span>
+      </div>
+    </div>
+  </dialog>
+
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

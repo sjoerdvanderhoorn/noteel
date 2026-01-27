@@ -1,0 +1,11 @@
+{
+  "files": [
+    { "path": "index.md" },
+    { "path": "my-projects/index.md" },
+    { "path": ".noteel/settings.json" },
+    { "path": ".noteel/extensions/chatgpt/manifest.json" },
+    { "path": ".noteel/extensions/chatgpt/index.js" },
+    { "path": ".noteel/extensions/drawio/manifest.json" },
+    { "path": ".noteel/extensions/drawio/index.js" }
+  ]
+}
