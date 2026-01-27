@@ -1,3 +1,17 @@
+---
+title: "Home Projects"
+tags:
+  - home
+  - projects
+  - maintenance
+  - diy
+categories:
+  - Home
+  - Projects
+date: 2026-01-27
+color: #06b6d4
+---
+
 # Home Projects
 
 ## This Weekend

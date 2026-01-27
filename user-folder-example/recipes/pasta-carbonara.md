@@ -1,3 +1,18 @@
+---
+title: "Pasta Carbonara"
+tags:
+  - recipe
+  - pasta
+  - italian
+  - quick-meal
+categories:
+  - Recipes
+  - Dinner
+star: true
+date: 2026-01-27
+color: #ea580c
+---
+
 # Pasta Carbonara
 
 ## Ingredients

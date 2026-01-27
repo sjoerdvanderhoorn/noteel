@@ -8,9 +8,12 @@ import { formatPath, joinPath, normalizeFolderName } from "../utils/path-utils.j
 import { getResponsiveMode, updateResponsiveLayout } from "../utils/responsive.js";
 import { getFolderViewMode, softDeleteFolder, restoreFolder, hardDeleteFolder, renameFolder, createFolder } from "../features/folders.js";
 import { setupDragAndDrop } from "../features/drag-drop.js";
+import { parseFrontmatter } from "../core/markdown.js";
 
 function buildFolderTree(paths) {
   const tree = {};
+  const isSearching = state.searchQuery || state.searchFilters.tags.length > 0 || state.searchFilters.categories.length > 0;
+  
   paths.forEach((path) => {
     const parts = path.split("/");
     parts.pop();
@@ -21,12 +24,10 @@ function buildFolderTree(paths) {
       if (hasDeletedPart) return;
     }
     
+    // Build full tree from root
     let node = tree;
     for (const part of parts) {
-      // Skip .noteel folders
-      if (part === ".noteel") {
-        return;
-      }
+      if (part === ".noteel") return;
       if (!node[part]) {
         node[part] = {};
       }
@@ -36,12 +37,72 @@ function buildFolderTree(paths) {
   return tree;
 }
 
+// Count matching notes in a folder (recursively)
+function countMatchingNotesInFolder(folderPath, files) {
+  const prefix = folderPath ? `${folderPath}/` : "";
+  let count = 0;
+  
+  Object.keys(files).forEach(path => {
+    if (path.startsWith(prefix) && path.endsWith('.md')) {
+      const note = files[path];
+      const { frontmatter, content: bodyContent } = parseFrontmatter(note.content);
+      
+      // Check if note matches current search/filter criteria
+      const query = state.searchQuery.toLowerCase();
+      const title = frontmatter.title || getFileTitle(note.content, path);
+      const titleMatch = title.toLowerCase().includes(query);
+      const contentMatch = (bodyContent || note.content).toLowerCase().includes(query);
+      
+      let tagMatch = state.searchFilters.tags.length === 0;
+      let categoryMatch = state.searchFilters.categories.length === 0;
+      
+      if (state.searchFilters.tags.length > 0) {
+        tagMatch = state.searchFilters.tags.some(tag => frontmatter.tags.includes(tag));
+      }
+      
+      if (state.searchFilters.categories.length > 0) {
+        categoryMatch = state.searchFilters.categories.some(cat => frontmatter.categories.includes(cat));
+      }
+      
+      const textMatch = query ? (titleMatch || contentMatch) : true;
+      const isDeleted = isSoftDeleted(path);
+      const shouldShow = state.showDeleted || !isDeleted;
+      
+      if (textMatch && tagMatch && categoryMatch && shouldShow) {
+        count++;
+      }
+    }
+  });
+  
+  return count;
+}
+
 function createFolderButton(label, path, showBannerFn, renderFoldersFn, renderBreadcrumbFn) {
+  const fs = loadFs();
+  const { files } = fs;
+  
+  // Check if we're in search/filter mode
+  const isSearching = state.searchQuery || state.searchFilters.tags.length > 0 || state.searchFilters.categories.length > 0;
+  
+  // Count matching notes in this folder
+  const matchCount = isSearching ? countMatchingNotesInFolder(path, files) : -1;
+  
+  // Hide folders with zero matches when searching
+  if (isSearching && matchCount === 0) {
+    return null;
+  }
+  
   const container = document.createElement("div");
   container.className = "folder-item";
   
   const button = document.createElement("button");
   button.textContent = label || "/";
+  
+  // Add match count badge
+  if (isSearching && matchCount > 0) {
+    button.textContent += ` (${matchCount})`;
+  }
+  
   button.className = path === state.currentFolder ? "active" : "";
   
   if (isFolderSoftDeleted(path)) {
@@ -175,7 +236,14 @@ function renderFolderNode(node, basePath, showBannerFn, renderFoldersFn, renderB
   Object.keys(node).forEach((folder) => {
     const path = basePath ? `${basePath}/${folder}` : folder;
     const item = document.createElement("li");
-    item.appendChild(createFolderButton(folder, path, showBannerFn, renderFoldersFn, renderBreadcrumbFn));
+    const folderBtn = createFolderButton(folder, path, showBannerFn, renderFoldersFn, renderBreadcrumbFn);
+    
+    // Skip folders with no matches
+    if (!folderBtn) {
+      return;
+    }
+    
+    item.appendChild(folderBtn);
     item.appendChild(renderFolderNode(node[folder], path, showBannerFn, renderFoldersFn, renderBreadcrumbFn));
     list.appendChild(item);
   });
@@ -185,11 +253,28 @@ function renderFolderNode(node, basePath, showBannerFn, renderFoldersFn, renderB
 export function renderFolders(showBannerFn, renderBreadcrumbFn) {
   const { files } = loadFs();
   const paths = Object.keys(files);
+  const isSearching = state.searchQuery || state.searchFilters.tags.length > 0 || state.searchFilters.categories.length > 0;
+  
+  // If searching, check if current folder has matches
+  if (isSearching && state.currentFolder) {
+    const currentFolderMatchCount = countMatchingNotesInFolder(state.currentFolder, files);
+    if (currentFolderMatchCount === 0) {
+      // Current folder has no matches, switch to root
+      state.currentFolder = "";
+      state.currentFile = null;
+      updateURL();
+    }
+  }
+  
   const tree = buildFolderTree(paths);
 
   ui.folderTree.innerHTML = "";
+  
+  // Always show root
   const rootButton = createFolderButton("/", "", showBannerFn, () => renderFolders(showBannerFn, renderBreadcrumbFn), renderBreadcrumbFn);
-  ui.folderTree.appendChild(rootButton);
+  if (rootButton) {
+    ui.folderTree.appendChild(rootButton);
+  }
 
   const list = renderFolderNode(tree, "", showBannerFn, () => renderFolders(showBannerFn, renderBreadcrumbFn), renderBreadcrumbFn);
   ui.folderTree.appendChild(list);
@@ -199,21 +284,47 @@ export function renderNotes(renderEditorFn) {
   const { files } = loadFs();
   const paths = Object.keys(files).filter((path) => path.endsWith(".md"));
   const folderPrefix = state.currentFolder ? `${state.currentFolder}/` : "";
+  const isSearching = state.searchQuery || state.searchFilters.tags.length > 0 || state.searchFilters.categories.length > 0;
 
-  let filtered = paths.filter((path) => path.startsWith(folderPrefix));
-  filtered = filtered.filter((path) => !path.slice(folderPrefix.length).includes("/"));
-
-  if (!state.showDeleted) {
-    filtered = filtered.filter((path) => !isSoftDeleted(path));
-  }
-
-  if (state.searchQuery) {
+  let filtered;
+  
+  if (isSearching) {
+    // When searching/filtering, show ALL matching notes from ALL folders
     const query = state.searchQuery.toLowerCase();
+    
     filtered = paths.filter((path) => {
       const note = files[path];
-      const title = getFileTitle(note.content, path).toLowerCase();
-      return title.includes(query) || note.content.toLowerCase().includes(query);
+      const { frontmatter, content: bodyContent } = parseFrontmatter(note.content);
+      const title = frontmatter.title || getFileTitle(note.content, path);
+      const titleMatch = title.toLowerCase().includes(query);
+      const contentMatch = (bodyContent || note.content).toLowerCase().includes(query);
+      
+      // Tag/category filtering
+      let tagMatch = state.searchFilters.tags.length === 0;
+      let categoryMatch = state.searchFilters.categories.length === 0;
+      
+      if (state.searchFilters.tags.length > 0) {
+        tagMatch = state.searchFilters.tags.some(tag => frontmatter.tags.includes(tag));
+      }
+      
+      if (state.searchFilters.categories.length > 0) {
+        categoryMatch = state.searchFilters.categories.some(cat => frontmatter.categories.includes(cat));
+      }
+      
+      // Text search is optional when filters are active
+      const textMatch = query ? (titleMatch || contentMatch) : true;
+      
+      return textMatch && tagMatch && categoryMatch;
     });
+    
+    if (!state.showDeleted) {
+      filtered = filtered.filter((path) => !isSoftDeleted(path));
+    }
+  } else {
+    // Normal browsing mode: show notes only from current folder (not subfolders)
+    filtered = paths.filter((path) => path.startsWith(folderPrefix));
+    filtered = filtered.filter((path) => !path.slice(folderPrefix.length).includes("/"));
+
     if (!state.showDeleted) {
       filtered = filtered.filter((path) => !isSoftDeleted(path));
     }
@@ -303,10 +414,16 @@ export function renderNotes(renderEditorFn) {
 
   filtered.forEach((path, index) => {
     const note = files[path];
+    const { frontmatter, content: bodyContent } = parseFrontmatter(note.content);
     const card = document.createElement("div");
     card.className = "note-card";
     card.dataset.path = path;
     card.dataset.index = index;
+    
+    if (frontmatter.color) {
+      card.style.borderLeftColor = frontmatter.color;
+      card.setAttribute('data-color', frontmatter.color);
+    }
     
     if (state.currentFile === path) {
       card.classList.add("active");
@@ -317,12 +434,41 @@ export function renderNotes(renderEditorFn) {
 
     const title = document.createElement("div");
     title.className = "note-title";
-    const titleText = getFileTitle(note.content, path.split("/").pop());
-    title.textContent = titleText;
+    const titleText = frontmatter.title || getFileTitle(note.content, path.split("/").pop());
+    title.innerHTML = titleText;
+    if (frontmatter.star) {
+      title.innerHTML += '<span class="note-star">★</span>';
+    }
     card.appendChild(title);
     
+    // Add tags
+    if (frontmatter.tags && frontmatter.tags.length > 0) {
+      const tagsDiv = document.createElement("div");
+      tagsDiv.className = "note-tags";
+      frontmatter.tags.forEach(tag => {
+        const tagSpan = document.createElement("span");
+        tagSpan.className = "note-tag";
+        tagSpan.textContent = tag;
+        tagsDiv.appendChild(tagSpan);
+      });
+      card.appendChild(tagsDiv);
+    }
+    
+    // Add categories
+    if (frontmatter.categories && frontmatter.categories.length > 0) {
+      const catsDiv = document.createElement("div");
+      catsDiv.className = "note-categories";
+      frontmatter.categories.forEach(cat => {
+        const catSpan = document.createElement("span");
+        catSpan.className = "note-category";
+        catSpan.textContent = cat;
+        catsDiv.appendChild(catSpan);
+      });
+      card.appendChild(catsDiv);
+    }
+    
     // Add preview text
-    const contentWithoutHeading = stripFirstHeading(note.content || "");
+    const contentWithoutHeading = stripFirstHeading(bodyContent || "");
     const lines = contentWithoutHeading.split("\n").filter(line => line.trim());
     
     if (lines.length > 0) {
@@ -366,6 +512,15 @@ export function renderEditor() {
     }
     ui.noteTitleInput.value = "";
     ui.noteTitleInput.disabled = true;
+    ui.noteTagsInput.value = "";
+    ui.noteTagsInput.disabled = true;
+    ui.noteCategoriesInput.value = "";
+    ui.noteCategoriesInput.disabled = true;
+    ui.noteStarBtn.classList.remove('starred');
+    ui.noteStarBtn.disabled = true;
+    ui.noteColorBtn.style.backgroundColor = "#3b82f6";
+    ui.noteColorBtn.disabled = true;
+    ui.noteColorInput.value = "#3b82f6";
     ui.softDeleteBtn.style.display = "none";
     ui.hardDeleteBtn.style.display = "none";
     ui.restoreBtn.style.display = "none";
@@ -376,11 +531,38 @@ export function renderEditor() {
   document.querySelector(".editor").style.display = "";
 
   const note = files[state.currentFile];
-  const title = getFileTitle(note.content, "");
-  const contentWithoutTitle = stripFirstHeading(note.content ?? "");
+  const { frontmatter, content: bodyContent } = parseFrontmatter(note.content);
+  
+  // Store frontmatter in state
+  state.currentFrontmatter = frontmatter;
+  
+  const title = frontmatter.title || getFileTitle(note.content, "");
+  const contentWithoutTitle = stripFirstHeading(bodyContent ?? "");
   
   ui.noteTitleInput.value = title;
   ui.noteTitleInput.disabled = false;
+  
+  // Set frontmatter fields
+  ui.noteTagsInput.value = frontmatter.tags.join(", ");
+  ui.noteTagsInput.disabled = false;
+  ui.noteCategoriesInput.value = frontmatter.categories.join(", ");
+  ui.noteCategoriesInput.disabled = false;
+  
+  // Set star button state
+  if (frontmatter.star) {
+    ui.noteStarBtn.classList.add('starred');
+    ui.noteStarBtn.textContent = '★'; // Filled star
+  } else {
+    ui.noteStarBtn.classList.remove('starred');
+    ui.noteStarBtn.textContent = '☆'; // Empty star
+  }
+  ui.noteStarBtn.disabled = false;
+  
+  // Set color button and input
+  const color = frontmatter.color || "#3b82f6";
+  ui.noteColorInput.value = color;
+  ui.noteColorBtn.style.backgroundColor = color;
+  ui.noteColorBtn.disabled = false;
   
   if (state.editorInstance) {
     state.editorInstance.setEditable(true);
@@ -416,4 +598,44 @@ export function renderAll(renderEditorFn, showBannerFn, renderBreadcrumbFn) {
   renderNotes(renderEditorFn);
   renderEditorFn();
   updateResponsiveLayout();
+  updateFilterDropdowns();
+}
+
+// Populate filter dropdowns with all available tags and categories
+export function updateFilterDropdowns() {
+  const { files } = loadFs();
+  const allTags = new Set();
+  const allCategories = new Set();
+  
+  Object.keys(files).forEach(path => {
+    if (path.endsWith('.md')) {
+      const { frontmatter } = parseFrontmatter(files[path].content);
+      frontmatter.tags.forEach(tag => allTags.add(tag));
+      frontmatter.categories.forEach(cat => allCategories.add(cat));
+    }
+  });
+  
+  // Update tag filter
+  ui.tagFilter.innerHTML = '<option value="">All Tags</option>';
+  Array.from(allTags).sort().forEach(tag => {
+    const option = document.createElement('option');
+    option.value = tag;
+    option.textContent = tag;
+    if (state.searchFilters.tags.includes(tag)) {
+      option.selected = true;
+    }
+    ui.tagFilter.appendChild(option);
+  });
+  
+  // Update category filter
+  ui.categoryFilter.innerHTML = '<option value="">All Categories</option>';
+  Array.from(allCategories).sort().forEach(cat => {
+    const option = document.createElement('option');
+    option.value = cat;
+    option.textContent = cat;
+    if (state.searchFilters.categories.includes(cat)) {
+      option.selected = true;
+    }
+    ui.categoryFilter.appendChild(option);
+  });
 }

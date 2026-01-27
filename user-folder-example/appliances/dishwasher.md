@@ -1,3 +1,18 @@
+---
+title: "Dishwasher - Model DW-5500"
+tags:
+  - appliance
+  - manual
+  - dishwasher
+  - maintenance
+categories:
+  - Home
+  - Kitchen
+star: true
+date: 2023-01-10
+color: #06b6d4
+---
+
 # Dishwasher - Model DW-5500
 
 ## Product Information

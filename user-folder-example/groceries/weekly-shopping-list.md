@@ -1,3 +1,18 @@
+---
+title: "Weekly Shopping List"
+tags:
+  - shopping
+  - groceries
+  - checklist
+  - weekly
+categories:
+  - Shopping
+  - Planning
+star: true
+date: 2026-01-27
+color: #10b981
+---
+
 # Weekly Shopping List
 
 ## Produce

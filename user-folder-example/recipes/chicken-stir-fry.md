@@ -1,3 +1,18 @@
+---
+title: "Chicken Stir-Fry"
+tags:
+  - recipe
+  - chicken
+  - quick-meal
+  - asian
+categories:
+  - Recipes
+  - Dinner
+star: true
+date: 2026-01-27
+color: #ea580c
+---
+
 # Chicken Stir-Fry
 
 ## Ingredients

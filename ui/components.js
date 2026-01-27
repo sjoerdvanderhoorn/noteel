@@ -2,6 +2,8 @@
 
 export const ui = {
   searchInput: document.getElementById("searchInput"),
+  tagFilter: document.getElementById("tagFilter"),
+  categoryFilter: document.getElementById("categoryFilter"),
   showDeletedToggle: document.getElementById("showDeletedToggle"),
   syncFromBtn: document.getElementById("syncFromBtn"),
   syncToBtn: document.getElementById("syncToBtn"),
@@ -57,5 +59,10 @@ export const ui = {
   welcomeOneDriveBtn: document.getElementById("welcomeOneDriveBtn"),
   welcomeGoogleDriveBtn: document.getElementById("welcomeGoogleDriveBtn"),
   welcomeDemoBtn: document.getElementById("welcomeDemoBtn"),
-  welcomeDecideLaterBtn: document.getElementById("welcomeDecideLaterBtn")
+  welcomeDecideLaterBtn: document.getElementById("welcomeDecideLaterBtn"),
+  noteTagsInput: document.getElementById("noteTagsInput"),
+  noteCategoriesInput: document.getElementById("noteCategoriesInput"),
+  noteStarBtn: document.getElementById("noteStarBtn"),
+  noteColorBtn: document.getElementById("noteColorBtn"),
+  noteColorInput: document.getElementById("noteColorInput")
 };

@@ -1,3 +1,18 @@
+---
+title: "Meal Prep Ideas for This Week"
+tags:
+  - meal-prep
+  - planning
+  - healthy
+  - weekly
+categories:
+  - Food
+  - Planning
+star: true
+date: 2026-01-27
+color: #10b981
+---
+
 # Meal Prep Ideas for This Week
 
 ## Monday

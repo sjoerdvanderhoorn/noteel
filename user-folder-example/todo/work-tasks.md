@@ -1,3 +1,18 @@
+---
+title: "Work Tasks"
+tags:
+  - work
+  - tasks
+  - todo
+  - priority
+categories:
+  - Work
+  - Tasks
+star: true
+date: 2026-01-27
+color: #ef4444
+---
+
 # Work Tasks
 
 ## High Priority

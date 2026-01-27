@@ -101,7 +101,6 @@ const ASSETS = [
   "./adapters/googledrive.js",
   "./user-folder-example/.noteel/file-index.json",
   "./user-folder-example/index.md",
-  "./user-folder-example/my-projects/index.md",
   "./user-folder-example/recipes/.noteel",
   "./user-folder-example/recipes/chocolate-chip-cookies.md",
   "./user-folder-example/recipes/pasta-carbonara.md",

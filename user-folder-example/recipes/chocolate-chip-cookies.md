@@ -1,3 +1,18 @@
+---
+title: "Chocolate Chip Cookies"
+tags:
+  - recipe
+  - dessert
+  - baking
+  - cookies
+categories:
+  - Recipes
+  - Desserts
+star: true
+date: 2026-01-27
+color: #f59e0b
+---
+
 # Chocolate Chip Cookies
 
 ## Ingredients

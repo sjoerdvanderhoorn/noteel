@@ -1,3 +1,19 @@
+---
+title: "Sustainable Energy Research"
+tags:
+  - energy
+  - research
+  - sustainability
+  - environment
+  - climate
+categories:
+  - Research
+  - Environment
+star: true
+date: 2026-01-27
+color: #10b981
+---
+
 # Sustainable Energy Research
 
 ## Overview

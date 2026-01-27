@@ -1,3 +1,19 @@
+---
+title: "AI Trends in 2026"
+tags:
+  - ai
+  - technology
+  - research
+  - trends
+  - machine-learning
+categories:
+  - Research
+  - Technology
+star: true
+date: 2026-01-27
+color: #8b5cf6
+---
+
 # AI Trends in 2026
 
 ## Current State of AI

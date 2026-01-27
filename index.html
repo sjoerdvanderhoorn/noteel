@@ -90,6 +90,14 @@
     <div class="brand">Noteel</div>
     <div class="search">
       <input id="searchInput" type="search" placeholder="Search notes..." />
+      <div class="search-filters">
+        <select id="tagFilter" class="filter-select">
+          <option value="">All Tags</option>
+        </select>
+        <select id="categoryFilter" class="filter-select">
+          <option value="">All Categories</option>
+        </select>
+      </div>
     </div>
     <div class="actions">
       <button id="syncStatusIcon" class="ghost icon-btn" title="All changes saved">✓</button>
@@ -133,6 +141,13 @@
           <button id="quoteBtn" type="button">Quote</button>
         </div>
         <div class="editor-toolbar-right">
+          <div class="inline-metadata">
+            <input id="noteTagsInput" type="text" placeholder="tags..." title="Tags (comma-separated)" />
+            <input id="noteCategoriesInput" type="text" placeholder="categories..." title="Categories (comma-separated)" />
+            <button id="noteStarBtn" class="ghost icon-btn" title="Toggle star">☆</button>
+            <button id="noteColorBtn" class="color-btn" title="Change color"></button>
+            <input id="noteColorInput" type="color" style="display: none;" />
+          </div>
           <button id="closeEditorBtn" class="ghost icon-btn close-editor" title="Close">&times;</button>
           <div class="dropdown">
             <button id="moreActionsBtn" class="ghost" type="button">⋮</button>

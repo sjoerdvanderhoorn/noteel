@@ -2,10 +2,10 @@
 import { getSelectedProvider, setSelectedProvider } from "./core/auth.js";
 import { state, updateURL, loadFromURL } from "./core/state.js";
 import { ensureSettingsFile, updateSettingsFromFile, loadFs, saveFs } from "./core/storage.js";
-import { serializeMarkdown } from "./core/markdown.js";
+import { serializeMarkdown, parseFrontmatter, serializeFrontmatter } from "./core/markdown.js";
 import { createAdapters } from "./core/adapters.js";
 import { ui } from "./ui/components.js";
-import { renderAll, renderEditor, renderBreadcrumb, renderNotes } from "./ui/renderer.js";
+import { renderAll, renderEditor, renderBreadcrumb, renderNotes, updateFilterDropdowns } from "./ui/renderer.js";
 import { initEditor } from "./ui/editor.js";
 import { showBanner, renderExtensions, renderThemes, showWelcomeScreenIfNeeded } from "./ui/dialogs.js";
 import { addNote, getNextNoteNumber, softDeleteNote, restoreNote, hardDeleteNote } from "./features/notes.js";
@@ -31,7 +31,20 @@ function debounceSave() {
     }
     const title = ui.noteTitleInput.value.trim();
     const bodyContent = state.editorInstance ? serializeMarkdown(state.editorInstance.getJSON(), state.editorInstance) : "";
-    const content = title ? `# ${title}\n\n${bodyContent}` : bodyContent;
+    
+    // Collect frontmatter
+    const frontmatter = {
+      title: title,
+      tags: ui.noteTagsInput.value.split(',').map(t => t.trim()).filter(t => t),
+      categories: ui.noteCategoriesInput.value.split(',').map(c => c.trim()).filter(c => c),
+      star: ui.noteStarBtn.classList.contains('starred'),
+      date: new Date().toISOString().split('T')[0],
+      color: ui.noteColorInput.value
+    };
+    
+    const frontmatterStr = serializeFrontmatter(frontmatter);
+    
+    const content = frontmatterStr ? `${frontmatterStr}\n\n# ${title}\n\n${bodyContent}` : (title ? `# ${title}\n\n${bodyContent}` : bodyContent);
     
     const fs = loadFs();
     const oldTitle = getFileTitle(fs.files[state.currentFile]?.content || "", "");
@@ -163,7 +176,27 @@ async function handleProviderSelection(provider) {
 // Event Listeners
 ui.searchInput.addEventListener("input", (event) => {
   state.searchQuery = event.target.value.trim();
-  renderNotes(renderEditor);
+  renderAll(renderEditor, showBanner, renderBreadcrumb);
+});
+
+ui.tagFilter.addEventListener("change", (event) => {
+  const value = event.target.value;
+  if (value) {
+    state.searchFilters.tags = [value];
+  } else {
+    state.searchFilters.tags = [];
+  }
+  renderAll(renderEditor, showBanner, renderBreadcrumb);
+});
+
+ui.categoryFilter.addEventListener("change", (event) => {
+  const value = event.target.value;
+  if (value) {
+    state.searchFilters.categories = [value];
+  } else {
+    state.searchFilters.categories = [];
+  }
+  renderAll(renderEditor, showBanner, renderBreadcrumb);
 });
 
 ui.showDeletedToggle.addEventListener("click", () => {
@@ -397,6 +430,34 @@ window.addEventListener("resize", () => {
 });
 
 ui.noteTitleInput.addEventListener("input", () => {
+  debounceSave();
+});
+
+ui.noteTagsInput.addEventListener("input", () => {
+  debounceSave();
+});
+
+ui.noteCategoriesInput.addEventListener("input", () => {
+  debounceSave();
+});
+
+ui.noteStarBtn.addEventListener("click", () => {
+  if (ui.noteStarBtn.classList.contains('starred')) {
+    ui.noteStarBtn.classList.remove('starred');
+    ui.noteStarBtn.textContent = '☆'; // Empty star
+  } else {
+    ui.noteStarBtn.classList.add('starred');
+    ui.noteStarBtn.textContent = '★'; // Filled star
+  }
+  debounceSave();
+});
+
+ui.noteColorBtn.addEventListener("click", () => {
+  ui.noteColorInput.click();
+});
+
+ui.noteColorInput.addEventListener("change", () => {
+  ui.noteColorBtn.style.backgroundColor = ui.noteColorInput.value;
   debounceSave();
 });
 

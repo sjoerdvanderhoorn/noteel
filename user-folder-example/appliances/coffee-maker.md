@@ -1,3 +1,18 @@
+---
+title: "Coffee Maker - Model CM-2000"
+tags:
+  - appliance
+  - manual
+  - coffee
+  - maintenance
+categories:
+  - Home
+  - Kitchen
+star: true
+date: 2024-03-15
+color: #78350f
+---
+
 # Coffee Maker - Model CM-2000
 
 ## Product Information

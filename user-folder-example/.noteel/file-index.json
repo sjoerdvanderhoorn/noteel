@@ -1,7 +1,6 @@
 {
   "files": [
     { "path": "index.md" },
-    { "path": "my-projects/index.md" },
     { "path": "recipes/.noteel" },
     { "path": "recipes/chocolate-chip-cookies.md" },
     { "path": "recipes/pasta-carbonara.md" },

@@ -1,3 +1,17 @@
+---
+title: "Microwave - Model MW-1200"
+tags:
+  - appliance
+  - manual
+  - microwave
+  - kitchen
+categories:
+  - Home
+  - Kitchen
+date: 2024-06-08
+color: #64748b
+---
+
 # Microwave - Model MW-1200
 
 ## Product Information

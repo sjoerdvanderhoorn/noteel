@@ -14,7 +14,12 @@ export const state = {
   syncTimeout: null, // Timeout for debounced cloud sync
   syncInterval: null, // Interval for periodic sync checks
   lastSyncTime: 0, // Track last sync to avoid conflicts
-  modifiedFiles: new Set() // Track locally modified files that need syncing
+  modifiedFiles: new Set(), // Track locally modified files that need syncing
+  searchFilters: { // Track active search filters
+    tags: [],
+    categories: []
+  },
+  currentFrontmatter: null // Track frontmatter of current file
 };
 
 // URL state management

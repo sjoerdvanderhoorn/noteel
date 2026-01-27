@@ -1,3 +1,19 @@
+---
+title: "Space Exploration Notes"
+tags:
+  - space
+  - research
+  - science
+  - exploration
+  - astronomy
+categories:
+  - Research
+  - Science
+star: true
+date: 2026-01-27
+color: #6366f1
+---
+
 # Space Exploration Notes
 
 ## Current Missions (2026)
