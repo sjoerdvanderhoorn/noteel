@@ -4,6 +4,11 @@
   "private": true,
   "description": "Offline-first PWA markdown notes",
   "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
   "dependencies": {
     "@azure/msal-browser": "^5.0.2",
     "@microsoft/microsoft-graph-client": "^3.0.7",
@@ -20,5 +25,10 @@
     "@tiptap/markdown": "^3.17.1",
     "@tiptap/starter-kit": "^3.0.0",
     "dropbox": "^10.34.0"
+  },
+  "devDependencies": {
+    "vite": "^5.4.11",
+    "vite-plugin-pwa": "^0.20.5",
+    "vite-plugin-static-copy": "^3.2.0"
   }
 }

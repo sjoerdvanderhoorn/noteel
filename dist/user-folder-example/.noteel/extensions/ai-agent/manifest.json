@@ -1,0 +1,9 @@
+{
+    "name": "AI Agent Extension",
+    "version": "1.0.0",
+    "description": "An extension to integrate AI Agent functionalities.",
+    "author": "Your Name",
+    "license": "MIT",
+    "main": "index.js",
+    "url": "https://example.com/ai-agent-extension.zip"
+}
