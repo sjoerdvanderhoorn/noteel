@@ -1,4 +1,4 @@
-const CACHE_NAME = "noteel-cache-v32";
+const CACHE_NAME = "noteel-cache-v33";
 const ASSETS = [
   "./",
   "./index.html",
