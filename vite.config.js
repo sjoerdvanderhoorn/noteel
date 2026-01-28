@@ -9,6 +9,14 @@ export default defineConfig({
         {
           src: 'user-folder-example',
           dest: ''
+        },
+        {
+          src: '.nojekyll',
+          dest: ''
+        },
+        {
+          src: 'CNAME',
+          dest: ''
         }
       ]
     }),
