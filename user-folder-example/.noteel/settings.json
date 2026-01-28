@@ -1,0 +1,14 @@
+{
+    "extensions": {
+        "ai-agent": {
+            "enabled": true
+        },
+        "drawio": {
+            "enabled": false
+        },
+        "due-dates": {
+            "enabled": true
+        }
+    },
+    "theme": "default"
+}

@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Noteel</title>
+  <link rel="manifest" href="/assets/manifest-CsGuINyU.webmanifest" />
+  <meta name="theme-color" content="#1f2937" />
+  <script type="module" crossorigin src="/assets/main-B27YE8ZC.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/auth-B3oSFb2k.js">
+  <link rel="stylesheet" crossorigin href="/assets/main-yJSrwtWH.css">
+<link rel="manifest" href="/manifest.webmanifest"><script id="vite-plugin-pwa:register-sw" src="/registerSW.js"></script></head>
+<body>
+  <header class="topbar">
+    <div class="brand">Noteel</div>
+    <div class="search">
+      <input id="searchInput" type="search" placeholder="Search notes..." />
+      <div class="search-filters">
+        <select id="tagFilter" class="filter-select">
+          <option value="">All Tags</option>
+        </select>
+        <select id="categoryFilter" class="filter-select">
+          <option value="">All Categories</option>
+        </select>
+      </div>
+    </div>
+    <div class="actions">
+      <button id="syncStatusIcon" class="ghost icon-btn" title="All changes saved">✓</button>
+      <button id="settingsBtn" class="ghost icon-btn" title="Settings">⚙</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <span>Folders</span>
+        <button id="newFolderBtn" class="ghost icon-btn" title="New folder">+</button>
+      </div>
+      <nav id="folderTree" class="folder-tree"></nav>
+    </aside>
+
+    <section class="list">
+      <div class="list-header">
+        <button id="listBackBtn" class="ghost icon-btn back-btn" title="Back to folders">←</button>
+        <div id="breadcrumb" class="breadcrumb"></div>
+        <button id="newNoteBtn" class="ghost icon-btn" title="New note">+</button>
+        <button id="showDeletedToggle" class="ghost icon-btn" title="Show deleted">👁</button>
+        <button id="viewToggleBtn" class="ghost icon-btn" title="Toggle view mode">⊞</button>
+      </div>
+      <div id="noteList" class="note-list"></div>
+    </section>
+
+    <section class="editor">
+      <div class="editor-toolbar">
+        <div class="editor-toolbar-left">
+          <button id="editorBackBtn" class="ghost icon-btn back-btn" title="Back">←</button>
+          <button id="boldBtn" class="toolbar-btn" type="button" title="Bold"><strong>B</strong></button>
+          <button id="italicBtn" class="toolbar-btn" type="button" title="Italic"><em>I</em></button>
+          <button id="underlineBtn" class="toolbar-btn" type="button" title="Underline"><u>U</u></button>
+          <button id="strikeBtn" class="toolbar-btn" type="button" title="Strikethrough"><s>S</s></button>
+          <button id="highlightBtn" class="toolbar-btn highlight-btn" type="button" title="Highlight">◐</button>
+          <button id="headingBtn" class="toolbar-btn" type="button" title="Heading">H₁</button>
+          <button id="bulletBtn" class="toolbar-btn" type="button" title="Bullet list">•</button>
+          <button id="checkboxBtn" class="toolbar-btn" type="button" title="Task list">☐</button>
+          <button id="codeBtn" class="toolbar-btn" type="button" title="Code block">{ }</button>
+          <button id="quoteBtn" class="toolbar-btn" type="button" title="Quote">❝</button>
+        </div>
+        <div class="editor-toolbar-right">
+          <button id="noteStarBtn" class="ghost icon-btn" title="Toggle star">☆</button>
+          <div class="dropdown">
+            <button id="metadataBtn" class="ghost icon-btn" type="button" title="Metadata">⚙</button>
+            <div class="dropdown-menu metadata-menu">
+              <div class="metadata-field">
+                <label>Tags</label>
+                <input id="noteTagsInput" type="text" placeholder="tag1, tag2..." />
+              </div>
+              <div class="metadata-field">
+                <label>Categories</label>
+                <input id="noteCategoriesInput" type="text" placeholder="category1, category2..." />
+              </div>
+              <div class="metadata-field">
+                <label>Color</label>
+                <div class="color-picker-wrapper">
+                  <button id="noteColorBtn" class="color-btn" title="Change color"></button>
+                  <input id="noteColorInput" type="color" />
+                </div>
+              </div>
+            </div>
+          </div>
+          <button id="closeEditorBtn" class="ghost icon-btn close-editor" title="Close">&times;</button>
+          <div class="dropdown">
+            <button id="moreActionsBtn" class="ghost icon-btn" type="button" title="More actions">⋮</button>
+            <div class="dropdown-menu">
+              <button id="softDeleteBtn" type="button">Soft delete</button>
+              <button id="restoreBtn" type="button">Restore</button>
+              <button id="hardDeleteBtn" class="danger" type="button">Hard delete</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="editor-title-container">
+        <input id="noteTitleInput" class="editor-title-input" type="text" placeholder="Note title..." />
+      </div>
+      <div id="editor" class="editor-surface" aria-label="Note editor"></div>
+    </section>
+  </main>
+
+  <dialog id="settingsDialog" class="settings-dialog">
+    <form method="dialog" class="settings-form">
+      <div class="settings-header">
+        <h2>Settings</h2>
+        <button id="closeSettings" class="ghost" value="cancel">Close</button>
+      </div>
+
+      <section class="settings-section">
+        <h3>Sync</h3>
+        <div class="settings-sync-controls">
+          <div class="current-adapter">
+            <label>Current Storage:</label>
+            <span id="currentAdapterDisplay"></span>
+          </div>
+          <div class="settings-actions">
+            <button id="syncFromBtn" class="primary" type="button">Sync from</button>
+            <button id="syncToBtn" type="button">Sync to</button>
+            <button id="logoutBtn" class="danger" type="button">Logout</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="settings-section">
+        <h3>Export</h3>
+        <div class="settings-actions">
+          <button id="exportZipBtn" class="primary" type="button">Download Notes as ZIP</button>
+        </div>
+      </section>
+
+      <section class="settings-section">
+        <h3>Extensions</h3>
+        <div id="extensionsList" class="settings-list"></div>
+        <div class="settings-actions">
+          <label class="file-upload">
+            <input id="extensionFile" type="file" accept=".zip" />
+            Upload ZIP
+          </label>
+          <input id="extensionUrl" type="url" placeholder="https://example.com/extension.zip" />
+          <button id="addExtensionUrl" type="button">Add from URL</button>
+          <button id="checkExtensionUpdates" type="button">Check updates</button>
+        </div>
+      </section>
+
+      <section class="settings-section">
+        <h3>Themes</h3>
+        <select id="themeSelect"></select>
+        <div class="settings-actions">
+          <label class="file-upload">
+            <input id="themeFile" type="file" accept=".css" />
+            Upload CSS
+          </label>
+          <input id="themeUrl" type="url" placeholder="https://example.com/theme.css" />
+          <button id="addThemeUrl" type="button">Add from URL</button>
+        </div>
+      </section>
+    </form>
+  </dialog>
+
+  <div id="banner" class="banner hidden"></div>
+
+  <dialog id="welcomeDialog" class="welcome-dialog">
+    <div class="welcome-content" id="welcomeContentMain">
+      <h1>Welcome to Noteel</h1>
+      <p>Choose where you'd like to save your notes:</p>
+      
+      <div class="storage-options">
+        <button id="welcomeDropboxBtn" class="storage-option" type="button">
+          <div class="storage-icon">📦</div>
+          <div class="storage-name">Dropbox</div>
+          <div class="storage-desc">Sync with Dropbox</div>
+        </button>
+        
+        <button id="welcomeOneDriveBtn" class="storage-option" type="button">
+          <div class="storage-icon">☁️</div>
+          <div class="storage-name">OneDrive</div>
+          <div class="storage-desc">Sync with Microsoft OneDrive</div>
+        </button>
+        
+        <button id="welcomeGoogleDriveBtn" class="storage-option" type="button">
+          <div class="storage-icon">🔷</div>
+          <div class="storage-name">Google Drive</div>
+          <div class="storage-desc">Sync with Google Drive</div>
+        </button>
+        
+        <button id="welcomeWebDAVBtn" class="storage-option" type="button">
+          <div class="storage-icon">🌐</div>
+          <div class="storage-name">WebDAV</div>
+          <div class="storage-desc">Connect to WebDAV server</div>
+        </button>
+        
+        <button id="welcomeGitHubBtn" class="storage-option" type="button">
+          <div class="storage-icon">🐙</div>
+          <div class="storage-name">GitHub</div>
+          <div class="storage-desc">Store in GitHub repository</div>
+        </button>
+        
+        <button id="welcomeGitLabBtn" class="storage-option" type="button">
+          <div class="storage-icon">🦊</div>
+          <div class="storage-name">GitLab</div>
+          <div class="storage-desc">Store in GitLab repository</div>
+        </button>
+        
+        <button id="welcomeSelfHostedGitBtn" class="storage-option" type="button">
+          <div class="storage-icon">🔧</div>
+          <div class="storage-name">Self-Hosted Git</div>
+          <div class="storage-desc">Gitea, Gogs, or compatible</div>
+        </button>
+        
+        <button id="welcomeS3Btn" class="storage-option" type="button">
+          <div class="storage-icon">🪣</div>
+          <div class="storage-name">S3 Storage</div>
+          <div class="storage-desc">AWS S3, MinIO, and compatible</div>
+        </button>
+      </div>
+      
+      <div class="welcome-footer-buttons">
+        <button id="welcomeDemoBtn" class="primary" type="button">Try Demo</button>
+        <button id="welcomeDecideLaterBtn" class="ghost" type="button">Decide Later</button>
+      </div>
+    </div>
+    
+    <div class="welcome-loading" id="welcomeLoading" style="display: none;">
+      <div class="spinner"></div>
+      <h2 id="welcomeLoadingTitle">Connecting...</h2>
+      <p id="welcomeLoadingMessage">Please wait while we sync your notes</p>
+      <div class="progress-info">
+        <span id="welcomeProgressText"></span>
+      </div>
+    </div>
+  </dialog>
+
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+</body>
+</html>
