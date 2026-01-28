@@ -1,4 +1,4 @@
-const CACHE_NAME = "noteel-cache-v21";
+const CACHE_NAME = "noteel-cache-v32";
 const ASSETS = [
   "./",
   "./index.html",
@@ -99,6 +99,11 @@ const ASSETS = [
   "./adapters/dropbox.js",
   "./adapters/onedrive.js",
   "./adapters/googledrive.js",
+  "./adapters/webdav.js",
+  "./adapters/github.js",
+  "./adapters/gitlab.js",
+  "./adapters/selfhostedgit.js",
+  "./adapters/s3.js",
   "./user-folder-example/.noteel/file-index.json",
   "./user-folder-example/index.md",
   "./user-folder-example/recipes/.noteel",
@@ -110,6 +115,10 @@ const ASSETS = [
   "./user-folder-example/todo/.noteel",
   "./user-folder-example/todo/work-tasks.md",
   "./user-folder-example/todo/home-projects.md",
+  "./user-folder-example/todo/complete-project-proposal.md",
+  "./user-folder-example/todo/book-dentist-appointment.md",
+  "./user-folder-example/todo/review-investment-portfolio.md",
+  "./user-folder-example/todo/submit-tax-documents.md",
   "./user-folder-example/appliances/coffee-maker.md",
   "./user-folder-example/appliances/dishwasher.md",
   "./user-folder-example/appliances/microwave.md",
@@ -117,8 +126,14 @@ const ASSETS = [
   "./user-folder-example/research/sustainable-energy.md",
   "./user-folder-example/research/space-exploration.md",
   "./user-folder-example/.noteel/settings.json",
-  "./user-folder-example/.noteel/extensions/chatgpt/manifest.json",
-  "./user-folder-example/.noteel/extensions/drawio/manifest.json"
+  "./user-folder-example/.noteel/extensions/ai-agent/manifest.json",
+  "./user-folder-example/.noteel/extensions/ai-agent/index.js",
+  "./user-folder-example/.noteel/extensions/ai-agent/styles.css",
+  "./user-folder-example/.noteel/extensions/drawio/manifest.json",
+  "./user-folder-example/.noteel/extensions/drawio/index.js",
+  "./user-folder-example/.noteel/extensions/due-dates/manifest.json",
+  "./user-folder-example/.noteel/extensions/due-dates/index.js",
+  "./user-folder-example/.noteel/extensions/due-dates/styles.css"
 ];
 
 self.addEventListener("install", (event) => {

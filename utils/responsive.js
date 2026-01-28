@@ -51,7 +51,7 @@ export function updateResponsiveLayout() {
     // Tablet: Show two panels (folder + list) or editor fullscreen
     layout.classList.add("responsive-tablet");
     
-    if (state.currentFile) {
+    if (state.currentFile || layout.classList.contains("masonry-editing")) {
       // Editing: show only editor fullscreen
       sidebar.classList.add("panel-hidden");
       list.classList.add("panel-hidden");

@@ -57,9 +57,20 @@ export async function loadExtensionsFromAdapter(adapter) {
   saveExtensions(extensions);
 }
 
-export async function applyExtensions(showBannerFn) {
+// Store for toolbar buttons added by extensions
+const extensionToolbarButtons = [];
+
+export function getExtensionToolbarButtons() {
+  return extensionToolbarButtons;
+}
+
+export async function applyExtensions(showBannerFn, api = {}) {
+  // Clear previous toolbar buttons
+  extensionToolbarButtons.length = 0;
+  
   const extensions = loadExtensions();
   const settings = loadSettings();
+  
   Object.values(extensions).forEach((ext) => {
     if (!settings.extensions?.[ext.id]?.enabled) {
       return;
@@ -71,19 +82,39 @@ export async function applyExtensions(showBannerFn) {
     const code = ext.files?.[mainFile];
     if (code) {
       try {
-        const fn = new Function("Noteel", `${code}; return typeof defaultExport === 'function' ? defaultExport : null;`);
-        const result = fn({
+        // Enhanced Noteel API
+        const noteelAPI = {
           addNote,
           removeNote,
           renameNote,
           loadFs,
           saveFs,
-          showBanner: showBannerFn
-        });
+          showBanner: showBannerFn,
+          // UI Hooks
+          addToolbarButton: (config) => {
+            extensionToolbarButtons.push(config);
+            // Trigger a custom event to notify UI of new toolbar button
+            window.dispatchEvent(new CustomEvent('extensionToolbarChanged'));
+          },
+          // Allow extensions to access additional API functions
+          ...api
+        };
+        
+        const fn = new Function("Noteel", `${code}; return typeof defaultExport === 'function' ? defaultExport : null;`);
+        const result = fn(noteelAPI);
         if (typeof result === "function") {
-          result();
+          try {
+            const innerFn = result(noteelAPI); // Pass Noteel to defaultExport, which returns the inner function
+            if (typeof innerFn === 'function') {
+              innerFn(); // Call the returned inner function
+            }
+          } catch (innerError) {
+            console.error(`[Extensions] Error executing ${ext.manifest.name} inner function:`, innerError);
+            showBannerFn(`Extension ${ext.manifest.name} failed during execution.`);
+          }
         }
-      } catch {
+      } catch (error) {
+        console.error(`Extension ${ext.manifest.name} error:`, error);
         showBannerFn(`Extension ${ext.manifest.name} failed to load.`);
       }
     }

@@ -58,11 +58,17 @@ export const ui = {
   welcomeDropboxBtn: document.getElementById("welcomeDropboxBtn"),
   welcomeOneDriveBtn: document.getElementById("welcomeOneDriveBtn"),
   welcomeGoogleDriveBtn: document.getElementById("welcomeGoogleDriveBtn"),
+  welcomeWebDAVBtn: document.getElementById("welcomeWebDAVBtn"),
+  welcomeGitHubBtn: document.getElementById("welcomeGitHubBtn"),
+  welcomeGitLabBtn: document.getElementById("welcomeGitLabBtn"),
+  welcomeSelfHostedGitBtn: document.getElementById("welcomeSelfHostedGitBtn"),
+  welcomeS3Btn: document.getElementById("welcomeS3Btn"),
   welcomeDemoBtn: document.getElementById("welcomeDemoBtn"),
   welcomeDecideLaterBtn: document.getElementById("welcomeDecideLaterBtn"),
   noteTagsInput: document.getElementById("noteTagsInput"),
   noteCategoriesInput: document.getElementById("noteCategoriesInput"),
   noteStarBtn: document.getElementById("noteStarBtn"),
   noteColorBtn: document.getElementById("noteColorBtn"),
-  noteColorInput: document.getElementById("noteColorInput")
+  noteColorInput: document.getElementById("noteColorInput"),
+  metadataBtn: document.getElementById("metadataBtn")
 };

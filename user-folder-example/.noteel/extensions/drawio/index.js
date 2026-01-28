@@ -1,1 +1,1 @@
-export default function () {}
+const defaultExport = function () {}

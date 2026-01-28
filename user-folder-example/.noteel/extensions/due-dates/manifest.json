@@ -1,0 +1,9 @@
+{
+  "name": "Due Dates",
+  "version": "1.0.0",
+  "description": "Manage due dates for your notes with calendar and list views",
+  "author": "Noteel Team",
+  "license": "MIT",
+  "main": "index.js",
+  "icon": "📅"
+}

@@ -10,6 +10,10 @@
     { "path": "todo/.noteel" },
     { "path": "todo/work-tasks.md" },
     { "path": "todo/home-projects.md" },
+    { "path": "todo/complete-project-proposal.md" },
+    { "path": "todo/book-dentist-appointment.md" },
+    { "path": "todo/review-investment-portfolio.md" },
+    { "path": "todo/submit-tax-documents.md" },
     { "path": "appliances/coffee-maker.md" },
     { "path": "appliances/dishwasher.md" },
     { "path": "appliances/microwave.md" },
@@ -17,9 +21,12 @@
     { "path": "research/sustainable-energy.md" },
     { "path": "research/space-exploration.md" },
     { "path": ".noteel/settings.json" },
-    { "path": ".noteel/extensions/chatgpt/manifest.json" },
-    { "path": ".noteel/extensions/chatgpt/index.js" },
+    { "path": ".noteel/extensions/ai-agent/manifest.json" },
+    { "path": ".noteel/extensions/ai-agent/index.js" },
     { "path": ".noteel/extensions/drawio/manifest.json" },
-    { "path": ".noteel/extensions/drawio/index.js" }
+    { "path": ".noteel/extensions/drawio/index.js" },
+    { "path": ".noteel/extensions/due-dates/manifest.json" },
+    { "path": ".noteel/extensions/due-dates/index.js" },
+    { "path": ".noteel/extensions/due-dates/styles.css" }
   ]
 }

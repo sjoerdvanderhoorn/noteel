@@ -1,9 +1,11 @@
 // Dialog management for settings, banners, and welcome screen
 
 import { ui } from "./components.js";
+import { state } from "../core/state.js";
 import { loadExtensions, loadSettings, saveSettings, updateSettingsFileFromLocal } from "../core/storage.js";
 import { loadThemes } from "../core/storage.js";
 import { applyExtensions } from "../features/extensions.js";
+import { parseFrontmatter } from "../core/markdown.js";
 
 export function showBanner(message) {
   ui.banner.textContent = message;
@@ -29,7 +31,14 @@ export function renderExtensions() {
       updated.extensions[ext.id] = { enabled: toggle.checked };
       saveSettings(updated);
       updateSettingsFileFromLocal();
-      applyExtensions(showBanner);
+      applyExtensions(showBanner, {
+        state,
+        ui,
+        renderAll: () => window.location.reload(), // Simple reload to apply changes
+        parseFrontmatter
+      });
+      // Trigger toolbar button rendering
+      window.dispatchEvent(new CustomEvent('extensionToolbarChanged'));
     });
     item.appendChild(label);
     item.appendChild(toggle);

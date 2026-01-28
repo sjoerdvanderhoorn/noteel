@@ -585,6 +585,12 @@ select {
   line-height: 1;
   padding: 4px 8px;
   display: none;
+  opacity: 0.7;
+  transition: opacity 0.15s ease;
+}
+
+.close-editor:hover {
+  opacity: 1;
 }
 
 .editor-toolbar {
@@ -611,6 +617,46 @@ select {
 .editor-toolbar button {
   padding: 6px 10px;
   font-size: 0.9rem;
+}
+
+.toolbar-btn {
+  min-width: 32px;
+  height: 32px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--text);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toolbar-btn:hover {
+  background: var(--panel-light);
+  border-color: var(--primary);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.toolbar-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.highlight-btn {
+  background: linear-gradient(135deg, #fef08a 0%, #fde047 100%);
+  color: #1a1d23;
+  border: 1px solid #facc15;
+}
+
+.highlight-btn:hover {
+  background: linear-gradient(135deg, #fde047 0%, #facc15 100%);
+  border-color: #eab308;
 }
 
 .editor-title-container {
@@ -667,6 +713,32 @@ select {
 .inline-metadata input[type="text"]::placeholder {
   color: var(--muted);
   opacity: 0.6;
+}
+
+.inline-metadata input[type="date"] {
+  padding: 5px 10px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--panel-light);
+  color: var(--text);
+  font-size: 0.8rem;
+  width: 130px;
+  transition: all 0.2s ease;
+}
+
+.inline-metadata input[type="date"]:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.inline-metadata input[type="date"]:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.due-date-input-container {
+  display: inline-flex;
+  align-items: center;
 }
 
 .color-btn {
@@ -751,6 +823,80 @@ select {
 
 .dropdown-menu button.danger:hover {
   background: rgba(239, 68, 68, 0.1);
+}
+
+.metadata-menu {
+  min-width: 280px;
+  padding: 12px;
+}
+
+.metadata-field {
+  margin-bottom: 12px;
+}
+
+.metadata-field:last-child {
+  margin-bottom: 0;
+}
+
+.metadata-field label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.metadata-field input[type="text"] {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+}
+
+.metadata-field input[type="text"]:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: var(--panel);
+}
+
+.metadata-field input[type="text"]::placeholder {
+  color: var(--muted);
+  opacity: 0.6;
+}
+
+.color-picker-wrapper {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.color-picker-wrapper .color-btn {
+  flex-shrink: 0;
+}
+
+.color-picker-wrapper input[type="color"] {
+  flex: 1;
+  height: 32px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: transparent;
+  cursor: pointer;
+  padding: 2px;
+}
+
+.color-picker-wrapper input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.color-picker-wrapper input[type="color"]::-webkit-color-swatch {
+  border: none;
+  border-radius: 4px;
 }
 
 .current-file {
@@ -1149,6 +1295,11 @@ select {
   .layout.responsive-tablet:not(.masonry-editing) .editor:not(.panel-hidden) {
     grid-column: 1 / -1;
   }
+  
+  /* When editing in masonry mode on tablet, make editor full width */
+  .layout.responsive-tablet.masonry-editing {
+    grid-template-columns: 1fr;
+  }
 
   .list {
     border-right: none;
@@ -1450,5 +1601,171 @@ select {
   
   .storage-options {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Authentication Dialogs */
+.webdav-auth-dialog,
+.github-auth-dialog,
+.gitlab-auth-dialog,
+.selfhostedgit-auth-dialog,
+.s3-auth-dialog {
+  border: none;
+  border-radius: var(--radius-lg);
+  background: var(--panel);
+  color: var(--text);
+  padding: 0;
+  max-width: 480px;
+  width: calc(100% - 32px);
+  box-shadow: var(--shadow-lg);
+}
+
+.webdav-auth-dialog::backdrop,
+.github-auth-dialog::backdrop,
+.gitlab-auth-dialog::backdrop,
+.selfhostedgit-auth-dialog::backdrop,
+.s3-auth-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+}
+
+.auth-form {
+  padding: 32px;
+}
+
+.auth-form h2 {
+  margin: 0 0 8px 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.auth-form > p {
+  margin: 0 0 24px 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.auth-form > p a {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+.auth-form > p a:hover {
+  text-decoration: underline;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 0.95rem;
+  font-family: inherit;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-group small {
+  display: block;
+  margin-top: 4px;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+}
+
+.form-group select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 0.95rem;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.form-group select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+.form-actions button {
+  padding: 10px 20px;
+  border-radius: var(--radius);
+  border: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.form-actions button[type="button"]:not(#github-connect):not(#gitlab-connect):not(#webdav-connect):not(#git-connect) {
+  background: var(--panel-light);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.form-actions button[type="button"]:not(#github-connect):not(#gitlab-connect):not(#webdav-connect):not(#git-connect):hover {
+  background: var(--bg);
+}
+
+#webdav-connect,
+#github-connect,
+#gitlab-connect,
+#git-connect,
+#s3-connect {
+  background: var(--primary);
+  color: white;
+}
+
+#webdav-connect:hover,
+#github-connect:hover,
+#gitlab-connect:hover,
+#git-connect:hover,
+#s3-connect:hover {
+  background: var(--primary-hover);
+}
+
+@media (max-width: 480px) {
+  .auth-form {
+    padding: 24px;
+  }
+  
+  .form-actions {
+    flex-direction: column-reverse;
+  }
+  
+  .form-actions button {
+    width: 100%;
   }
 }

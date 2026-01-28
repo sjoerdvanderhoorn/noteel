@@ -3,6 +3,11 @@
 import { DropboxAdapter } from "../adapters/dropbox.js";
 import { GoogleDriveAdapter } from "../adapters/googledrive.js";
 import { OneDriveAdapter } from "../adapters/onedrive.js";
+import { WebDAVAdapter } from "../adapters/webdav.js";
+import { GitHubAdapter } from "../adapters/github.js";
+import { GitLabAdapter } from "../adapters/gitlab.js";
+import { SelfHostedGitAdapter } from "../adapters/selfhostedgit.js";
+import { S3Adapter } from "../adapters/s3.js";
 import { loadFs, saveFs } from "../core/storage.js";
 import { listFoldersFromPaths } from "../utils/file-utils.js";
 
@@ -80,7 +85,12 @@ export function createAdapters() {
     sample: new StaticFolderAdapter("./user-folder-example"),
     dropbox: new DropboxAdapter(),
     onedrive: new OneDriveAdapter(),
-    googledrive: new GoogleDriveAdapter()
+    googledrive: new GoogleDriveAdapter(),
+    webdav: new WebDAVAdapter(),
+    github: new GitHubAdapter(),
+    gitlab: new GitLabAdapter(),
+    selfhostedgit: new SelfHostedGitAdapter(),
+    s3: new S3Adapter()
   };
 }
 

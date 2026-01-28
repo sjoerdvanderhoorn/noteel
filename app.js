@@ -11,7 +11,7 @@ import { showBanner, renderExtensions, renderThemes, showWelcomeScreenIfNeeded }
 import { addNote, getNextNoteNumber, softDeleteNote, restoreNote, hardDeleteNote } from "./features/notes.js";
 import { createFolder, setFolderViewMode, getFolderViewMode } from "./features/folders.js";
 import { syncFromAdapter, syncToAdapter, updateStatus, startPeriodicSyncCheck, stopPeriodicSyncCheck, scheduleCloudSync, setAdapters } from "./features/sync.js";
-import { ensureExtensionStubs, loadExtensionsFromAdapter, applyExtensions, importExtensionZip, checkForExtensionUpdates } from "./features/extensions.js";
+import { ensureExtensionStubs, loadExtensionsFromAdapter, applyExtensions, importExtensionZip, checkForExtensionUpdates, getExtensionToolbarButtons } from "./features/extensions.js";
 import { ensureThemeApplied, loadThemesFromAdapter, importTheme, setTheme } from "./features/themes.js";
 import { getResponsiveMode, updateResponsiveLayout } from "./utils/responsive.js";
 import { joinPath, normalizeFolderName } from "./utils/path-utils.js";
@@ -108,15 +108,24 @@ async function initialSync() {
   if (Object.keys(fs.files).length === 0) {
     await syncFromAdapter(adapters.sample);
   }
-  ensureSettingsFile();
-  updateSettingsFromFile();
   await loadExtensionsFromAdapter(adapters.sample);
   ensureExtensionStubs();
   await loadThemesFromAdapter(adapters.sample);
+  ensureSettingsFile();
+  updateSettingsFromFile(); // This loads settings from file-system into localStorage
   renderExtensions();
   renderThemes();
   ensureThemeApplied();
-  applyExtensions(showBanner);
+  applyExtensions(showBanner, {
+    state,
+    ui: { ...ui, renderEditor },
+    renderAll: () => renderAll(renderEditor, showBanner, renderBreadcrumb),
+    parseFrontmatter,
+    updateResponsiveLayout,
+    getFolderViewMode,
+    setFolderViewMode
+  });
+  renderExtensionToolbarButtons();
 }
 
 async function handleProviderSelection(provider) {
@@ -403,7 +412,17 @@ ui.moreActionsBtn.addEventListener("click", (e) => {
   dropdown.classList.toggle("open");
 });
 
-document.addEventListener("click", () => {
+ui.metadataBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
+  const dropdown = ui.metadataBtn.parentElement;
+  dropdown.classList.toggle("open");
+});
+
+// Prevent metadata dropdown from closing when clicking inside it
+document.addEventListener("click", (e) => {
+  if (e.target.closest(".metadata-menu")) {
+    return; // Don't close if clicking inside the metadata menu
+  }
   const dropdown = document.querySelector(".dropdown.open");
   if (dropdown) {
     dropdown.classList.remove("open");
@@ -464,6 +483,11 @@ ui.noteColorInput.addEventListener("change", () => {
 ui.welcomeDropboxBtn.addEventListener("click", () => handleProviderSelection('dropbox'));
 ui.welcomeOneDriveBtn.addEventListener("click", () => handleProviderSelection('onedrive'));
 ui.welcomeGoogleDriveBtn.addEventListener("click", () => handleProviderSelection('googledrive'));
+ui.welcomeWebDAVBtn.addEventListener("click", () => handleProviderSelection('webdav'));
+ui.welcomeGitHubBtn.addEventListener("click", () => handleProviderSelection('github'));
+ui.welcomeGitLabBtn.addEventListener("click", () => handleProviderSelection('gitlab'));
+ui.welcomeSelfHostedGitBtn.addEventListener("click", () => handleProviderSelection('selfhostedgit'));
+ui.welcomeS3Btn.addEventListener("click", () => handleProviderSelection('s3'));
 ui.welcomeDemoBtn.addEventListener("click", async () => {
   setSelectedProvider('local');
   ui.welcomeDialog.close();
@@ -471,6 +495,23 @@ ui.welcomeDemoBtn.addEventListener("click", async () => {
   // Load demo files from sample adapter
   try {
     await syncFromAdapter(adapters.sample);
+    await loadExtensionsFromAdapter(adapters.sample);
+    ensureExtensionStubs();
+    await loadThemesFromAdapter(adapters.sample);
+    updateSettingsFromFile(); // Load settings from demo including extension enable states
+    renderExtensions();
+    renderThemes();
+    ensureThemeApplied();
+    applyExtensions(showBanner, {
+      state,
+      ui: { ...ui, renderEditor },
+      renderAll: () => renderAll(renderEditor, showBanner, renderBreadcrumb),
+      parseFrontmatter,
+      updateResponsiveLayout,
+      getFolderViewMode,
+      setFolderViewMode
+    });
+    renderExtensionToolbarButtons();
     renderAll(renderEditor, showBanner, renderBreadcrumb);
     showBanner('Demo content loaded! Explore the sample notes.');
   } catch (error) {
@@ -488,6 +529,37 @@ ui.welcomeDecideLaterBtn.addEventListener("click", () => {
 window.addEventListener('folderChanged', () => {
   renderAll(renderEditor, showBanner, renderBreadcrumb);
 });
+
+// Handle extension toolbar changed event
+window.addEventListener('extensionToolbarChanged', () => {
+  renderExtensionToolbarButtons();
+});
+
+// Render extension toolbar buttons
+function renderExtensionToolbarButtons() {
+  // Find or create container for extension buttons in the header
+  const actionsDiv = document.querySelector('.topbar .actions');
+  if (!actionsDiv) return;
+  
+  // Remove previous extension buttons
+  const oldButtons = actionsDiv.querySelectorAll('.extension-toolbar-btn');
+  oldButtons.forEach(btn => btn.remove());
+  
+  // Add new buttons
+  const buttons = getExtensionToolbarButtons();
+  const settingsBtn = document.getElementById('settingsBtn');
+  
+  buttons.forEach(config => {
+    const btn = document.createElement('button');
+    btn.className = 'ghost icon-btn extension-toolbar-btn';
+    btn.innerHTML = config.icon || '🔧';
+    btn.title = config.title || 'Extension Button';
+    btn.addEventListener('click', config.onClick);
+    
+    // Insert before settings button
+    actionsDiv.insertBefore(btn, settingsBtn);
+  });
+}
 
 // Initialize application
 async function init() {
