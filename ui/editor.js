@@ -1,92 +1,204 @@
-// TipTap editor initialization and toolbar configuration
+// Milkdown editor initialization and toolbar configuration
 
-import { Editor } from "@tiptap/core";
-import StarterKit from "@tiptap/starter-kit";
-import TaskList from "@tiptap/extension-task-list";
-import TaskItem from "@tiptap/extension-task-item";
-import Highlight from "@tiptap/extension-highlight";
-import Underline from "@tiptap/extension-underline";
-import ListItem from "@tiptap/extension-list-item";
-import Heading from "@tiptap/extension-heading";
-import Paragraph from "@tiptap/extension-paragraph";
-import CodeBlock from "@tiptap/extension-code-block";
-import Blockquote from "@tiptap/extension-blockquote";
-import { Markdown } from "@tiptap/markdown";
+import "@milkdown/crepe/theme/common/style.css";
+import { Crepe } from "@milkdown/crepe";
+import { commandsCtx, editorViewCtx, parserCtx } from "@milkdown/kit/core";
+import { uploadConfig } from "@milkdown/kit/plugin/upload";
+import { Slice } from "@milkdown/kit/prose/model";
+import {
+  blockquoteSchema,
+  bulletListSchema,
+  codeBlockSchema,
+  headingSchema,
+  listItemSchema,
+  setBlockTypeCommand,
+  toggleEmphasisCommand,
+  toggleStrongCommand,
+  wrapInBlockTypeCommand
+} from "@milkdown/kit/preset/commonmark";
+import { toggleStrikethroughCommand } from "@milkdown/kit/preset/gfm";
+import { loadFs, saveFs } from "../core/storage.js";
 import { ui } from "./components.js";
 import { state } from "../core/state.js";
 
 export async function initEditor(onUpdateCallback) {
-  state.editorInstance = new Editor({
-    element: ui.editor,
-    extensions: [
-      Markdown,
-      StarterKit.configure({
-        listItem: false, // We'll configure this separately
-        heading: false, // We'll configure this separately
-        paragraph: false, // We'll configure this separately
-        codeBlock: false, // We'll configure this separately
-        blockquote: false, // We'll configure this separately
-      }),
-      Paragraph.extend({
-        draggable: true,
-      }),
-      Heading.extend({
-        draggable: true,
-      }),
-      CodeBlock.extend({
-        draggable: true,
-      }),
-      Blockquote.extend({
-        draggable: true,
-      }),
-      ListItem.extend({
-        draggable: true,
-      }),
-      TaskList,
-      TaskItem.configure({
-        nested: true,
-      }).extend({
-        draggable: true,
-      }),
-      Highlight.configure({
-        multicolor: false,
-      }),
-      Underline,
-    ],
-    content: "",
-    editable: false,
-    onUpdate: onUpdateCallback
+  const crepe = new Crepe({
+    root: ui.editor,
+    defaultValue: ""
   });
+  crepe.editor.config((ctx) => {
+    ctx.update(uploadConfig.key, (prev) => ({
+      ...prev,
+      uploader: async (files, schema) => {
+        const imageNode = schema.nodes.image;
+        if (!imageNode) return [];
+
+        const fs = loadFs();
+        const savedImages = [];
+        const uploaded = [];
+        const activeFolder = state.currentFile?.split("/").slice(0, -1).join("/") || state.currentFolder || "";
+
+        for (let i = 0; i < files.length; i += 1) {
+          const file = files.item(i);
+          if (!file || !file.type.includes("image")) continue;
+
+          const ext = getFileExtension(file);
+          const uniqueName = `image-${Date.now()}-${Math.random().toString(36).slice(2, 10)}.${ext}`;
+          const fullPath = activeFolder ? `${activeFolder}/${uniqueName}` : uniqueName;
+          const src = uniqueName; // keep relative to note folder
+          const dataUrl = await readFileAsDataUrl(file);
+
+          fs.files[fullPath] = {
+            content: dataUrl,
+            modified: Date.now()
+          };
+          state.modifiedFiles.add(fullPath);
+
+          const node = imageNode.createAndFill({ src });
+          if (node) {
+            uploaded.push(node);
+          }
+          savedImages.push(fullPath);
+        }
+
+        if (savedImages.length > 0) {
+          saveFs(fs);
+        }
+
+        return uploaded;
+      }
+    }));
+  });
+  await crepe.create();
+  crepe.setReadonly(true);
+  crepe.on((listener) => {
+    listener.markdownUpdated((_, markdown, previousMarkdown) => {
+      if (markdown !== previousMarkdown) {
+        onUpdateCallback();
+      }
+    });
+  });
+
+  state.editorInstance = {
+    editor: crepe.editor,
+    getMarkdown: () => crepe.getMarkdown(),
+    setEditable: (isEditable) => {
+      crepe.setReadonly(!isEditable);
+    },
+    setMarkdown: (markdown) => {
+      crepe.editor.action((ctx) => {
+        const parser = ctx.get(parserCtx);
+        const view = ctx.get(editorViewCtx);
+        const doc = parser(markdown || "");
+        if (!doc) {
+          return;
+        }
+        const { state: viewState } = view;
+        view.dispatch(
+          viewState.tr.replace(0, viewState.doc.content.size, new Slice(doc.content, 0, 0))
+        );
+      });
+    }
+  };
+
+  const runEditorCommand = (executor) => {
+    if (!state.editorInstance?.editor) return;
+    state.editorInstance.editor.action((ctx) => {
+      executor(ctx);
+      ctx.get(editorViewCtx).focus();
+    });
+  };
 
   // Setup toolbar event listeners
   ui.boldBtn.addEventListener("click", () => {
-    state.editorInstance.chain().focus().toggleBold().run();
+    runEditorCommand((ctx) => {
+      ctx.get(commandsCtx).call(toggleStrongCommand.key);
+    });
   });
   ui.italicBtn.addEventListener("click", () => {
-    state.editorInstance.chain().focus().toggleItalic().run();
+    runEditorCommand((ctx) => {
+      ctx.get(commandsCtx).call(toggleEmphasisCommand.key);
+    });
   });
   ui.underlineBtn.addEventListener("click", () => {
-    state.editorInstance.chain().focus().toggleUnderline().run();
+    // Underline is not part of standard markdown/Milkdown.
   });
   ui.strikeBtn.addEventListener("click", () => {
-    state.editorInstance.chain().focus().toggleStrike().run();
+    runEditorCommand((ctx) => {
+      ctx.get(commandsCtx).call(toggleStrikethroughCommand.key);
+    });
   });
   ui.highlightBtn.addEventListener("click", () => {
-    state.editorInstance.chain().focus().toggleHighlight().run();
+    // Highlight is not part of standard markdown/Milkdown.
   });
   ui.headingBtn.addEventListener("click", () => {
-    state.editorInstance.chain().focus().toggleHeading({ level: 1 }).run();
+    runEditorCommand((ctx) => {
+      ctx.get(commandsCtx).call(setBlockTypeCommand.key, {
+        nodeType: headingSchema.type(ctx),
+        attrs: { level: 1 }
+      });
+    });
   });
   ui.bulletBtn.addEventListener("click", () => {
-    state.editorInstance.chain().focus().toggleBulletList().run();
+    runEditorCommand((ctx) => {
+      ctx.get(commandsCtx).call(wrapInBlockTypeCommand.key, {
+        nodeType: bulletListSchema.type(ctx)
+      });
+    });
   });
   ui.checkboxBtn.addEventListener("click", () => {
-    state.editorInstance.chain().focus().toggleTaskList().run();
+    runEditorCommand((ctx) => {
+      ctx.get(commandsCtx).call(wrapInBlockTypeCommand.key, {
+        nodeType: listItemSchema.type(ctx),
+        attrs: { checked: false }
+      });
+    });
   });
   ui.codeBtn.addEventListener("click", () => {
-    state.editorInstance.chain().focus().toggleCodeBlock().run();
+    runEditorCommand((ctx) => {
+      ctx.get(commandsCtx).call(setBlockTypeCommand.key, {
+        nodeType: codeBlockSchema.type(ctx)
+      });
+    });
   });
   ui.quoteBtn.addEventListener("click", () => {
-    state.editorInstance.chain().focus().toggleBlockquote().run();
+    runEditorCommand((ctx) => {
+      ctx.get(commandsCtx).call(wrapInBlockTypeCommand.key, {
+        nodeType: blockquoteSchema.type(ctx)
+      });
+    });
   });
+
+  ui.underlineBtn.disabled = true;
+  ui.underlineBtn.title = "Underline is not available in standard Markdown";
+  ui.highlightBtn.disabled = true;
+  ui.highlightBtn.title = "Highlight is not available in standard Markdown";
+}
+
+function readFileAsDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ""));
+    reader.onerror = () => reject(reader.error || new Error("Failed to read image file"));
+    reader.readAsDataURL(file);
+  });
+}
+
+function getFileExtension(file) {
+  const fromName = (file.name || "").split(".").pop()?.toLowerCase();
+  if (fromName && /^[a-z0-9]{1,6}$/.test(fromName)) {
+    return fromName;
+  }
+
+  const byMime = {
+    "image/jpeg": "jpg",
+    "image/png": "png",
+    "image/gif": "gif",
+    "image/webp": "webp",
+    "image/svg+xml": "svg",
+    "image/bmp": "bmp",
+    "image/x-icon": "ico"
+  };
+
+  return byMime[file.type] || "png";
 }

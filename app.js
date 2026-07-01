@@ -30,7 +30,7 @@ function debounceSave() {
       return;
     }
     const title = ui.noteTitleInput.value.trim();
-    const bodyContent = state.editorInstance ? serializeMarkdown(state.editorInstance.getJSON(), state.editorInstance) : "";
+    const bodyContent = state.editorInstance ? serializeMarkdown(null, state.editorInstance) : "";
     
     // Collect frontmatter
     const frontmatter = {
@@ -39,7 +39,8 @@ function debounceSave() {
       categories: ui.noteCategoriesInput.value.split(',').map(c => c.trim()).filter(c => c),
       star: ui.noteStarBtn.classList.contains('starred'),
       date: new Date().toISOString().split('T')[0],
-      color: ui.noteColorInput.value
+      color: ui.noteColorInput.value,
+      dueDate: ui.noteDueDateInput.value
     };
     
     const frontmatterStr = serializeFrontmatter(frontmatter);
@@ -457,6 +458,10 @@ ui.noteTagsInput.addEventListener("input", () => {
 });
 
 ui.noteCategoriesInput.addEventListener("input", () => {
+  debounceSave();
+});
+
+ui.noteDueDateInput.addEventListener("change", () => {
   debounceSave();
 });
 

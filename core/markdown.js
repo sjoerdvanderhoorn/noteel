@@ -1,13 +1,10 @@
-// Markdown serialization utilities using TipTap's markdown manager
-// This module provides a wrapper around the editor's markdown functionality
-// The actual markdown parsing/serialization is handled by @tiptap/markdown
+// Markdown serialization utilities
 
 export function serializeMarkdown(doc, editorInstance) {
-  if (!doc?.content || !editorInstance?.markdown) {
+  if (!editorInstance?.getMarkdown) {
     return "";
   }
-  // Use TipTap's markdown manager to serialize
-  return editorInstance.markdown.serialize(doc);
+  return editorInstance.getMarkdown();
 }
 
 // Parse YAML frontmatter from markdown content
@@ -18,7 +15,8 @@ export function parseFrontmatter(content) {
     categories: [],
     star: false,
     date: "",
-    color: ""
+    color: "",
+    dueDate: ""
   };
   
   if (!content) {
@@ -55,6 +53,8 @@ export function parseFrontmatter(content) {
       frontmatter.date = trimmed.substring(5).trim().replace(/^["']|["']$/g, "");
     } else if (trimmed.startsWith("color:")) {
       frontmatter.color = trimmed.substring(6).trim().replace(/^["']|["']$/g, "");
+    } else if (trimmed.startsWith("dueDate:")) {
+      frontmatter.dueDate = trimmed.substring(8).trim().replace(/^["']|["']$/g, "");
     } else if (trimmed.startsWith("tags:")) {
       const tagsStr = trimmed.substring(5).trim();
       if (tagsStr.startsWith("[") && tagsStr.endsWith("]")) {
@@ -167,6 +167,10 @@ export function serializeFrontmatter(frontmatter) {
   
   if (frontmatter.color) {
     parts.push(`color: ${frontmatter.color}`);
+  }
+
+  if (frontmatter.dueDate) {
+    parts.push(`dueDate: ${frontmatter.dueDate}`);
   }
   
   parts.push("---");

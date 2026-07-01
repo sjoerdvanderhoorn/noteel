@@ -507,7 +507,7 @@ export function renderEditor() {
   const { files } = loadFs();
   if (!state.currentFile || !files[state.currentFile]) {
     if (state.editorInstance) {
-      state.editorInstance.commands.setContent("");
+      state.editorInstance.setMarkdown("");
       state.editorInstance.setEditable(false);
     }
     ui.noteTitleInput.value = "";
@@ -516,6 +516,8 @@ export function renderEditor() {
     ui.noteTagsInput.disabled = true;
     ui.noteCategoriesInput.value = "";
     ui.noteCategoriesInput.disabled = true;
+    ui.noteDueDateInput.value = "";
+    ui.noteDueDateInput.disabled = true;
     ui.noteStarBtn.classList.remove('starred');
     ui.noteStarBtn.disabled = true;
     ui.noteColorBtn.style.backgroundColor = "#3b82f6";
@@ -547,6 +549,8 @@ export function renderEditor() {
   ui.noteTagsInput.disabled = false;
   ui.noteCategoriesInput.value = frontmatter.categories.join(", ");
   ui.noteCategoriesInput.disabled = false;
+  ui.noteDueDateInput.value = frontmatter.dueDate || "";
+  ui.noteDueDateInput.disabled = false;
   
   // Set star button state
   if (frontmatter.star) {
@@ -566,14 +570,7 @@ export function renderEditor() {
   
   if (state.editorInstance) {
     state.editorInstance.setEditable(true);
-    // Use TipTap's markdown parsing to set the editor content
-    const json = state.editorInstance.markdown?.parse(contentWithoutTitle);
-    if (json) {
-      state.editorInstance.commands.setContent(json);
-    } else {
-      // Fallback if markdown parsing fails
-      state.editorInstance.commands.setContent(contentWithoutTitle || "", { contentType: 'markdown' });
-    }
+    state.editorInstance.setMarkdown(contentWithoutTitle || "");
   }
 
   const deleted = isSoftDeleted(state.currentFile);
