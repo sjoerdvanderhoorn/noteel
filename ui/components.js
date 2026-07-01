@@ -67,6 +67,7 @@ export const ui = {
   welcomeDecideLaterBtn: document.getElementById("welcomeDecideLaterBtn"),
   noteTagsInput: document.getElementById("noteTagsInput"),
   noteCategoriesInput: document.getElementById("noteCategoriesInput"),
+  noteDueDateInput: document.getElementById("noteDueDateInput"),
   noteStarBtn: document.getElementById("noteStarBtn"),
   noteColorBtn: document.getElementById("noteColorBtn"),
   noteColorInput: document.getElementById("noteColorInput"),

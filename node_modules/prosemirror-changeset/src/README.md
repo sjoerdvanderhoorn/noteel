@@ -7,7 +7,7 @@ in order to do such change tracking in a halfway performant way during
 live editing.
 
 This code is licensed under an [MIT
-licence](https://github.com/ProseMirror/prosemirror-changeset/blob/master/LICENSE).
+licence](https://code.haverbeke.berlin/prosemirror/prosemirror-changeset/src/branch/main/LICENSE).
 
 ## Programming interface
 
@@ -28,3 +28,5 @@ it was made, or the step data necessary to invert it again.
 @simplifyChanges
 
 @TokenEncoder
+
+@ChangeJSON

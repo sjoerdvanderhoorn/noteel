@@ -870,6 +870,23 @@ select {
   opacity: 0.6;
 }
 
+.metadata-field input[type="date"] {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+}
+
+.metadata-field input[type="date"]:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: var(--panel);
+}
+
 .color-picker-wrapper {
   display: flex;
   gap: 8px;

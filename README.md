@@ -8,7 +8,7 @@ Noteel is a lightweight, privacy-focused note-taking application that stores you
 
 ## ✨ Key Features
 
-- **📝 Markdown-First**: Write in Markdown with a rich WYSIWYG editor powered by TipTap
+- **📝 Markdown-First**: Write in Markdown with a rich WYSIWYG editor powered by Milkdown
 - **🔌 Offline-First**: Full functionality without internet connection, with automatic sync when online
 - **☁️ Multi-Cloud Sync**: Choose from Dropbox, OneDrive, Google Drive, or keep notes local
 - **📱 Progressive Web App**: Install on any device, works like a native app
@@ -106,7 +106,7 @@ noteel/
 ├── ui/                # User interface components
 │   ├── components.js  # UI element references
 │   ├── dialogs.js     # Modals and banners
-│   ├── editor.js      # TipTap editor setup
+│   ├── editor.js      # Milkdown editor setup
 │   ├── renderer.js    # View rendering
 │   └── token-dialog.js # OAuth token UI
 ├── features/          # Feature modules
@@ -213,4 +213,3 @@ Contributions are welcome! Areas where you can help:
 - 🎨 New themes
 - 🔌 Extension development
 - 🌐 New storage adapter implementations (Git, iCloud, WebDAV, etc.)
-
