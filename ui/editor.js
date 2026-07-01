@@ -3,6 +3,7 @@
 import "@milkdown/crepe/theme/common/style.css";
 import { Crepe } from "@milkdown/crepe";
 import { commandsCtx, editorViewCtx, parserCtx } from "@milkdown/kit/core";
+import { uploadConfig } from "@milkdown/kit/plugin/upload";
 import { Slice } from "@milkdown/kit/prose/model";
 import {
   blockquoteSchema,
@@ -16,6 +17,7 @@ import {
   wrapInBlockTypeCommand
 } from "@milkdown/kit/preset/commonmark";
 import { toggleStrikethroughCommand } from "@milkdown/kit/preset/gfm";
+import { loadFs, saveFs } from "../core/storage.js";
 import { ui } from "./components.js";
 import { state } from "../core/state.js";
 
@@ -23,6 +25,49 @@ export async function initEditor(onUpdateCallback) {
   const crepe = new Crepe({
     root: ui.editor,
     defaultValue: ""
+  });
+  crepe.editor.config((ctx) => {
+    ctx.update(uploadConfig.key, (prev) => ({
+      ...prev,
+      uploader: async (files, schema) => {
+        const imageNode = schema.nodes.image;
+        if (!imageNode) return [];
+
+        const fs = loadFs();
+        const savedImages = [];
+        const uploaded = [];
+        const activeFolder = state.currentFile?.split("/").slice(0, -1).join("/") || state.currentFolder || "";
+
+        for (let i = 0; i < files.length; i += 1) {
+          const file = files.item(i);
+          if (!file || !file.type.includes("image")) continue;
+
+          const ext = getFileExtension(file);
+          const uniqueName = `image-${Date.now()}-${Math.random().toString(36).slice(2, 10)}.${ext}`;
+          const fullPath = activeFolder ? `${activeFolder}/${uniqueName}` : uniqueName;
+          const src = uniqueName; // keep relative to note folder
+          const dataUrl = await readFileAsDataUrl(file);
+
+          fs.files[fullPath] = {
+            content: dataUrl,
+            modified: Date.now()
+          };
+          state.modifiedFiles.add(fullPath);
+
+          const node = imageNode.createAndFill({ src });
+          if (node) {
+            uploaded.push(node);
+          }
+          savedImages.push(fullPath);
+        }
+
+        if (savedImages.length > 0) {
+          saveFs(fs);
+        }
+
+        return uploaded;
+      }
+    }));
   });
   await crepe.create();
   crepe.setReadonly(true);
@@ -128,4 +173,32 @@ export async function initEditor(onUpdateCallback) {
   ui.underlineBtn.title = "Underline is not available in standard Markdown";
   ui.highlightBtn.disabled = true;
   ui.highlightBtn.title = "Highlight is not available in standard Markdown";
+}
+
+function readFileAsDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ""));
+    reader.onerror = () => reject(reader.error || new Error("Failed to read image file"));
+    reader.readAsDataURL(file);
+  });
+}
+
+function getFileExtension(file) {
+  const fromName = (file.name || "").split(".").pop()?.toLowerCase();
+  if (fromName && /^[a-z0-9]{1,6}$/.test(fromName)) {
+    return fromName;
+  }
+
+  const byMime = {
+    "image/jpeg": "jpg",
+    "image/png": "png",
+    "image/gif": "gif",
+    "image/webp": "webp",
+    "image/svg+xml": "svg",
+    "image/bmp": "bmp",
+    "image/x-icon": "ico"
+  };
+
+  return byMime[file.type] || "png";
 }
